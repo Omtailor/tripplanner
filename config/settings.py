@@ -5,7 +5,8 @@ Django settings for config project.
 from pathlib import Path
 from decouple import config, Csv
 from datetime import timedelta
-
+import pymysql                          # ✅ ADD
+pymysql.install_as_MySQLdb()           # ✅ ADD
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ── Security ──────────────────────────────────────────────────
