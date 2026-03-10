@@ -47,19 +47,26 @@ const slideVariants = {
 
 
 const LOADING_SENTENCES = [
-  "✈️ Crafting your perfect trip...",
-  "🗺️ Charting your route across India...",
-  "📅 Locking in your travel dates...",
-  "🏨 Handpicking the finest stays for you...",
-  "🍽️ Discovering local flavours you'll love...",
-  "🚆 Finding the best ways to get there...",
-  "🌅 Curating sunrise spots just for you...",
-  "🎒 Packing your days with experiences...",
-  "📍 Pinning every hidden gem on your map...",
-  "💫 Adding those little moments of magic...",
-  "🛎️ Your itinerary is moments away...",
-  "🚀 Almost ready — your dream trip awaits!",
+  "✈️ Crafting your perfect trip across India...",
+  "🗺️ Charting the most scenic route just for you...",
+  "📅 Locking in your travel dates and schedule...",
+  "🏨 Handpicking the finest stays along the way...",
+  "🍽️ Discovering local flavours you'll absolutely love...",
+  "🚆 Finding the best trains, cabs, and connections...",
+  "🏔️ Exploring offbeat trails only locals know about...",
+  "🛺 Arranging every transfer so you don't have to...",
+  "🌅 Scouting the most breathtaking sunrise spots...",
+  "🎭 Weaving culture, adventure, and relaxation together...",
+  "🎒 Packing your days with unforgettable experiences...",
+  "🌿 Finding that perfect chai stop between destinations...",
+  "📍 Pinning every hidden gem onto your map...",
+  "🗿 Uncovering centuries of history along your route...",
+  "💫 Adding those little moments of pure magic...",
+  "🛎️ Putting the finishing touches on your itinerary...",
+  "🔍 Double-checking every detail one last time...",
+  "🚀 Almost ready — your dream trip is nearly here!",
 ]
+
 
 
 // ── Generating Overlay ────────────────────────────────────────
