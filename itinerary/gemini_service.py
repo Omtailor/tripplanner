@@ -504,7 +504,7 @@ def _validate_schedule(itinerary: ItineraryResponse) -> None:
 
 
 # ── Core generation function ──────────────────────────────────
-def generate_itinerary(trip: dict, max_retries: int = 2) -> ItineraryResponse:
+def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
     last_error = None
     start_date = trip["start_date"]
     if isinstance(start_date, str):
@@ -558,7 +558,7 @@ def regenerate_day(
     day_number: int,
     old_day: dict,
     all_days: list,
-    max_retries: int = 2,
+    max_retries: int = 0,
 ) -> DayPlan:
     start_date = trip["start_date"]
     if isinstance(start_date, str):
