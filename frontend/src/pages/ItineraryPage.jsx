@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { ArrowLeft, RefreshCw, MapPin, Clock, IndianRupee, Hotel, Bus, Download } from 'lucide-react'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import ItineraryPDF from '../components/itinerary/ItineraryPDF'
+import { fetchTripWeather } from '../api/weatherService' // ✅ WEATHER: import
 
 
 export default function ItineraryPage() {
@@ -17,6 +18,8 @@ export default function ItineraryPage() {
   const [loading, setLoading] = useState(true)
   const [regenDayId, setRegenDayId] = useState(null)
   const [showSuccessBanner, setShowSuccessBanner] = useState(false)
+  const [weatherMap, setWeatherMap] = useState({}) // ✅ WEATHER: state
+
 
   useEffect(() => {
     api.get(`/itinerary/${id}/`)
@@ -24,6 +27,20 @@ export default function ItineraryPage() {
       .catch(() => toast.error('Failed to load itinerary'))
       .finally(() => setLoading(false))
   }, [id])
+
+
+  // ✅ WEATHER: fetch after itinerary loads
+  useEffect(() => {
+    if (!itinerary) return
+    const { destination, start_date, end_date } = itinerary.trip
+    fetchTripWeather(destination, start_date, end_date).then(data => {
+      if (!data) return
+      const map = {}
+      data.forEach(d => { map[d.date] = d })
+      setWeatherMap(map)
+    })
+  }, [itinerary])
+
 
   const regenDay = async (dayNumber) => {
     setRegenDayId(dayNumber)
@@ -42,6 +59,7 @@ export default function ItineraryPage() {
     }
   }
 
+
   if (loading) return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center',
@@ -55,11 +73,14 @@ export default function ItineraryPage() {
     </div>
   )
 
+
   if (!itinerary) return null
+
 
   const days = itinerary.days || []
   const summary = itinerary.summary || {}
   const trip = itinerary.trip
+
 
   const chartData = [
     { name: 'Intercity', value: summary.intercity_travel_cost_inr || 0 },
@@ -69,6 +90,7 @@ export default function ItineraryPage() {
     { name: 'Activities', value: summary.activities_total_inr || 0 },
   ]
   const COLORS = ['#4f8ef7', '#a855f7', '#2dd4bf', '#f472b6', '#fb923c']
+
 
   return (
     <div style={{
@@ -90,7 +112,7 @@ export default function ItineraryPage() {
         }} />
       </div>
 
-      {/* ✅ CHANGED: Sticky Navbar — flexWrap + clamp font/padding on buttons */}
+      {/* Sticky Navbar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
         padding: 'clamp(10px, 2vw, 16px) clamp(14px, 3vw, 32px)',
@@ -246,7 +268,7 @@ export default function ItineraryPage() {
               boxShadow: '0 16px 50px rgba(0,0,0,0.5)',
             }}>
 
-              {/* ✅ CHANGED: Day Header — flexWrap so regen button drops below on mobile */}
+              {/* Day Header */}
               <div style={{
                 padding: 'clamp(14px, 3vw, 22px) clamp(16px, 3vw, 30px)',
                 background: 'linear-gradient(135deg, rgba(79,142,247,0.1), rgba(168,85,247,0.07))',
@@ -272,6 +294,7 @@ export default function ItineraryPage() {
                       — {day.theme}
                     </span>
                   </div>
+
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
                     <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>
                       {day.date}
@@ -290,6 +313,45 @@ export default function ItineraryPage() {
                       }}>{v}</span>
                     ))}
                   </div>
+
+                  {/* ✅ WEATHER: weather strip per day */}
+                  {weatherMap[day.date] && (() => {
+                    const w = weatherMap[day.date]
+                    return (
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        marginTop: 10,
+                        padding: '5px 14px',
+                        background: 'rgba(79,142,247,0.08)',
+                        border: '1px solid rgba(79,142,247,0.18)',
+                        borderRadius: 100,
+                      }}>
+                        <span style={{ fontSize: 15 }}>{w.emoji}</span>
+                        <span style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: 13, fontWeight: 600,
+                          color: 'rgba(255,255,255,0.75)',
+                        }}>
+                          {w.maxTemp}° / {w.minTemp}°C
+                        </span>
+                        <span style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: 12,
+                          color: 'rgba(255,255,255,0.38)',
+                        }}>
+                          {w.label}
+                        </span>
+                        <span style={{
+                          fontFamily: "'Inter', sans-serif",
+                          fontSize: 12,
+                          color: w.precipitation > 0 ? '#7eb3ff' : 'rgba(255,255,255,0.3)',
+                        }}>
+                          {w.precipitation > 0 ? `🌧 ${w.precipitation}mm` : '✓ No rain'}
+                        </span>
+                      </div>
+                    )
+                  })()}
+
                 </div>
 
                 {/* Regenerate Button */}
@@ -326,7 +388,7 @@ export default function ItineraryPage() {
               {/* Day Body */}
               <div style={{ padding: 'clamp(16px, 3vw, 26px) clamp(16px, 3vw, 30px)', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-                {/* ✅ CHANGED: Meals Row — auto-fit collapses to 1 col on mobile */}
+                {/* Meals Row */}
                 <div className="meals-grid" style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
@@ -414,7 +476,7 @@ export default function ItineraryPage() {
                   </div>
                 </div>
 
-                {/* ✅ CHANGED: Bottom Info — auto-fit collapses to 2 col on mobile */}
+                {/* Bottom Info */}
                 <div className="info-grid" style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
@@ -575,21 +637,12 @@ export default function ItineraryPage() {
         )}
       </AnimatePresence>
 
-      {/* ✅ CHANGED: media queries added */}
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
         @media (max-width: 480px) {
-          .meals-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .info-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .regen-btn {
-            font-size: 12px !important;
-            padding: 8px 12px !important;
-          }
+          .meals-grid { grid-template-columns: 1fr !important; }
+          .info-grid { grid-template-columns: 1fr 1fr !important; }
+          .regen-btn { font-size: 12px !important; padding: 8px 12px !important; }
         }
       `}</style>
     </div>
