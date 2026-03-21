@@ -470,7 +470,18 @@ export default function PlannerPage() {
                       placeholder="Search your origin city..."
                       value={citySearch}
                       onChange={e => { setCitySearch(e.target.value); update('origin', '') }}
-                      className="glass-input"
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(255, 255, 255, 0.06)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        borderRadius: '12px',
+                        color: '#fff',
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '16px',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
                     />
                     <div style={{ maxHeight: 180, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
                       {filteredCities.slice(0, 15).map(city => (
