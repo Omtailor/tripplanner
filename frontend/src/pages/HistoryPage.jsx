@@ -64,8 +64,8 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
             fontSize: 15, fontWeight: 500, cursor: 'pointer',
             transition: 'all 0.2s'
           }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
           >
             Cancel
           </button>
@@ -78,8 +78,8 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
             fontSize: 15, fontWeight: 600, cursor: 'pointer',
             transition: 'all 0.2s'
           }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.25)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.25)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
           >
             Delete
           </button>
@@ -90,10 +90,10 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
 }
 
 export default function HistoryPage() {
-  const [trips, setTrips]           = useState([])
-  const [loading, setLoading]       = useState(true)
-  const [deleting, setDeleting]     = useState(null)
-  const [confirmId, setConfirmId]   = useState(null)
+  const [trips, setTrips] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(null)
+  const [confirmId, setConfirmId] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -175,22 +175,22 @@ export default function HistoryPage() {
           width: '100%', maxWidth: 1100, padding: '0 24px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between'
         }}>
-<motion.button
-  whileTap={{ scale: 0.96 }}
-  onClick={() => navigate('/')}
-  style={{
-    display: 'flex', alignItems: 'center', gap: 8,
-    padding: '8px 20px',
-    background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
-    backgroundSize: '200% auto',
-    border: 'none', borderRadius: 100,
-    color: '#fff', fontFamily: "'Inter', sans-serif",
-    fontSize: 14, fontWeight: 600, cursor: 'pointer',
-    boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
-  }}
->
-  <ArrowLeft size={16} /> Dashboard
-</motion.button>
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={() => navigate('/')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '8px 20px',
+              background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
+              backgroundSize: '200% auto',
+              border: 'none', borderRadius: 100,
+              color: '#fff', fontFamily: "'Inter', sans-serif",
+              fontSize: 14, fontWeight: 600, cursor: 'pointer',
+              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
+            }}
+          >
+            <ArrowLeft size={16} /> Dashboard
+          </motion.button>
 
 
           <div style={{
@@ -200,10 +200,10 @@ export default function HistoryPage() {
             TripPlanner ✈️
           </div>
 
-          <motion.button 
+          <motion.button
             whileHover={{ backgroundPosition: '100% 0' }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => navigate('/plan')} 
+            onClick={() => navigate('/plan')}
             style={{
               padding: '8px 20px',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
@@ -212,7 +212,7 @@ export default function HistoryPage() {
               color: '#fff', fontFamily: "'Inter', sans-serif",
               fontSize: 14, fontWeight: 600, cursor: 'pointer',
               boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
-          }}>
+            }}>
             + New Trip
           </motion.button>
         </div>
@@ -233,11 +233,11 @@ export default function HistoryPage() {
             background: 'radial-gradient(circle at top center, rgba(123,97,255,0.25), transparent 65%)',
             pointerEvents: 'none'
           }} />
-          
+
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ position: 'relative', zIndex: 1 }}>
             <h1 style={{
               fontFamily: "'Poppins', sans-serif",
-              fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: '#fff', 
+              fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: '#fff',
               display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8
             }}>
               <span style={{ fontSize: '1.1em' }}>🗂️</span> Your Travel History
@@ -261,10 +261,10 @@ export default function HistoryPage() {
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 24,
             }}>
-            <div style={{ 
-              width: 80, height: 80, margin: '0 auto 24px', 
+            <div style={{
+              width: 80, height: 80, margin: '0 auto 24px',
               background: 'rgba(255,255,255,0.05)', borderRadius: '50%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center' 
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
               <Plane size={36} color="rgba(255,255,255,0.4)" />
             </div>
@@ -295,7 +295,7 @@ export default function HistoryPage() {
             {trips.map((item, index) => {
               const trip = item.trip
               const isDeleting = deleting === item.id
-              
+
               return (
                 <motion.div
                   key={item.id}
@@ -304,10 +304,10 @@ export default function HistoryPage() {
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   transition={{ delay: index * 0.05, duration: 0.4 }}
                   onClick={() => !isDeleting && navigate(`/itinerary/${item.id}`)}
-                  whileHover={!isDeleting ? { 
-                    y: -3, 
-                    boxShadow: '0 16px 40px rgba(0,0,0,0.55)', 
-                    borderColor: 'rgba(255,255,255,0.18)' 
+                  whileHover={!isDeleting ? {
+                    y: -3,
+                    boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
+                    borderColor: 'rgba(255,255,255,0.18)'
                   } : {}}
                   whileTap={!isDeleting ? { scale: 0.98 } : {}}
                   style={{
@@ -334,15 +334,15 @@ export default function HistoryPage() {
 
                   {/* Left Column: Title & Meta */}
                   <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    
+
                     <div>
                       <h2 style={{
                         fontFamily: "'Poppins', sans-serif",
-                        fontSize: 22, fontWeight: 700, color: '#fff', 
+                        fontSize: 22, fontWeight: 700, color: '#fff',
                         margin: 0, display: 'flex', alignItems: 'center', gap: 10
                       }}>
-                        {trip?.origin} 
-                        <Plane size={18} color="#7b61ff" style={{ opacity: 0.8 }} /> 
+                        {trip?.origin}
+                        <Plane size={18} color="#7b61ff" style={{ opacity: 0.8 }} />
                         {trip?.destination}
                       </h2>
                       <div style={{
@@ -383,36 +383,44 @@ export default function HistoryPage() {
 
                   {/* Right Column: Actions */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    
+
                     {/* Delete Button */}
-                    <button
+                    {/* Delete Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.92 }}
                       onClick={e => {
                         e.stopPropagation()
                         setConfirmId(item.id)
                       }}
                       disabled={isDeleting}
+                      title="Delete trip"
                       style={{
-                        width: 40, height: 40, borderRadius: '50%',
+                        width: 42, height: 42, borderRadius: '50%',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(239,68,68,0.08)',
-                        border: '1px solid rgba(239,68,68,0.2)',
+                        background: 'rgba(239,68,68,0.12)',
+                        border: '1.5px solid rgba(239,68,68,0.35)',
                         cursor: isDeleting ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s ease',
+                        flexShrink: 0,
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,0.2)'
-                        e.currentTarget.style.transform = 'scale(1.05)'
+                        e.currentTarget.style.background = 'rgba(239,68,68,0.25)'
+                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.6)'
+                        e.currentTarget.style.boxShadow = '0 0 12px rgba(239,68,68,0.3)'
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,0.08)'
-                        e.currentTarget.style.transform = 'scale(1)'
+                        e.currentTarget.style.background = 'rgba(239,68,68,0.12)'
+                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.35)'
+                        e.currentTarget.style.boxShadow = 'none'
                       }}
                     >
                       {isDeleting
                         ? <ClipLoader size={16} color="#ef4444" />
-                        : <Trash2 size={18} color="#ef4444" />
+                        : <Trash2 size={18} color="#ef4444" strokeWidth={2} />
                       }
-                    </button>
+                    </motion.button>
+
 
                     {/* View Details Chevron */}
                     <div style={{
@@ -421,7 +429,7 @@ export default function HistoryPage() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transition: 'all 0.2s',
                     }}
-                    className="chevron-btn"
+                      className="chevron-btn"
                     >
                       <ChevronRight size={22} color="#fff" />
                     </div>
