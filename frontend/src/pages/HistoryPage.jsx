@@ -388,7 +388,7 @@ export default function HistoryPage() {
                     {/* Delete Button */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.92 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={e => {
                         e.stopPropagation()
                         setConfirmId(item.id)
@@ -396,28 +396,32 @@ export default function HistoryPage() {
                       disabled={isDeleting}
                       title="Delete trip"
                       style={{
-                        width: 42, height: 42, borderRadius: '50%',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(239,68,68,0.12)',
-                        border: '1.5px solid rgba(239,68,68,0.35)',
+                        width: 42, height: 42,
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        background: 'rgba(239,68,68,0.85)',   // ← solid red background
+                        border: '1.5px solid rgba(239,68,68,1)',
                         cursor: isDeleting ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s ease',
-                        flexShrink: 0,
+                        position: 'relative',
+                        zIndex: 10,                            // ← ensure it's above card layers
+                        boxShadow: '0 0 12px rgba(239,68,68,0.4)',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,0.25)'
-                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.6)'
-                        e.currentTarget.style.boxShadow = '0 0 12px rgba(239,68,68,0.3)'
+                        e.currentTarget.style.background = 'rgba(239,68,68,1)'
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(239,68,68,0.6)'
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,0.12)'
-                        e.currentTarget.style.borderColor = 'rgba(239,68,68,0.35)'
-                        e.currentTarget.style.boxShadow = 'none'
+                        e.currentTarget.style.background = 'rgba(239,68,68,0.85)'
+                        e.currentTarget.style.boxShadow = '0 0 12px rgba(239,68,68,0.4)'
                       }}
                     >
                       {isDeleting
-                        ? <ClipLoader size={16} color="#ef4444" />
-                        : <Trash2 size={18} color="#ef4444" strokeWidth={2} />
+                        ? <ClipLoader size={16} color="#fff" />
+                        : <Trash2 size={18} color="#fff" strokeWidth={2.5} />  // ← WHITE icon
                       }
                     </motion.button>
 
