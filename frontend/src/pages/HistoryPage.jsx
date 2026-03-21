@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
 import { ClipLoader } from 'react-spinners'
-import { ArrowLeft, MapPin, Calendar, Users, Wallet, ChevronRight, Inbox, Trash2, AlertTriangle, Plane } from 'lucide-react'
+import { ArrowLeft, Calendar, ChevronRight, Trash2, AlertTriangle, Plane } from 'lucide-react'
 
 // ── Confirm Dialog Component ─────────────────────────────────
 function ConfirmDialog({ destination, onConfirm, onCancel }) {
@@ -192,7 +192,6 @@ export default function HistoryPage() {
             <ArrowLeft size={16} /> Dashboard
           </motion.button>
 
-
           <div style={{
             fontFamily: "'Poppins', sans-serif",
             fontSize: 16, fontWeight: 600, color: '#fff', letterSpacing: '0.5px'
@@ -307,7 +306,6 @@ export default function HistoryPage() {
                   whileHover={!isDeleting ? {
                     y: -3,
                     boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
-                    borderColor: 'rgba(255,255,255,0.18)'
                   } : {}}
                   whileTap={!isDeleting ? { scale: 0.98 } : {}}
                   style={{
@@ -316,6 +314,7 @@ export default function HistoryPage() {
                     backdropFilter: 'blur(20px) saturate(160%)',
                     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
                     border: '1px solid rgba(255, 255, 255, 0.10)',
+                    borderTop: '1px solid rgba(255,255,255,0.15)', // ← replaces the absolute highlight div
                     borderRadius: 16,
                     padding: '24px',
                     boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
@@ -323,18 +322,12 @@ export default function HistoryPage() {
                     opacity: isDeleting ? 0.5 : 1,
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     flexWrap: 'wrap', gap: 20,
-                    overflow: 'hidden'
+                    overflow: 'visible', // ✅ FIXED: was 'hidden', which clipped the Trash2 SVG
                   }}
                 >
-                  {/* Inner top highlight via pseudo-element equivalent */}
-                  <div style={{
-                    position: 'absolute', top: 0, left: 0, right: 0, height: 1,
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
-                  }} />
 
                   {/* Left Column: Title & Meta */}
                   <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-
                     <div>
                       <h2 style={{
                         fontFamily: "'Poppins', sans-serif",
@@ -378,17 +371,13 @@ export default function HistoryPage() {
                         </div>
                       ))}
                     </div>
-
                   </div>
 
                   {/* Right Column: Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
 
-                    {/* Delete Button */}
-                    {/* Delete Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
+                    {/* ✅ Delete Button — fixed */}
+                    <button
                       onClick={e => {
                         e.stopPropagation()
                         setConfirmId(item.id)
@@ -397,34 +386,35 @@ export default function HistoryPage() {
                       title="Delete trip"
                       style={{
                         width: 42, height: 42,
+                        minWidth: 42, minHeight: 42,
                         borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        background: '#ef4444',
+                        border: 'none',
+                        padding: 0,
+                        outline: 'none',
                         flexShrink: 0,
-                        background: 'rgba(239,68,68,0.85)',   // ← solid red background
-                        border: '1.5px solid rgba(239,68,68,1)',
+                        overflow: 'visible', // ✅ never clip SVG
                         cursor: isDeleting ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.2s ease',
-                        position: 'relative',
-                        zIndex: 10,                            // ← ensure it's above card layers
-                        boxShadow: '0 0 12px rgba(239,68,68,0.4)',
+                        boxShadow: '0 4px 14px rgba(239,68,68,0.45)',
+                        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,1)'
-                        e.currentTarget.style.boxShadow = '0 0 20px rgba(239,68,68,0.6)'
+                        e.currentTarget.style.transform = 'scale(1.1)'
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,68,68,0.65)'
                       }}
                       onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(239,68,68,0.85)'
-                        e.currentTarget.style.boxShadow = '0 0 12px rgba(239,68,68,0.4)'
+                        e.currentTarget.style.transform = 'scale(1)'
+                        e.currentTarget.style.boxShadow = '0 4px 14px rgba(239,68,68,0.45)'
                       }}
                     >
                       {isDeleting
                         ? <ClipLoader size={16} color="#fff" />
-                        : <Trash2 size={18} color="#fff" strokeWidth={2.5} />  // ← WHITE icon
+                        : <Trash2 size={18} color="#fff" strokeWidth={2.5} />
                       }
-                    </motion.button>
-
+                    </button>
 
                     {/* View Details Chevron */}
                     <div style={{
@@ -432,14 +422,12 @@ export default function HistoryPage() {
                       background: 'rgba(255,255,255,0.08)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transition: 'all 0.2s',
-                    }}
-                      className="chevron-btn"
-                    >
+                      flexShrink: 0,
+                    }}>
                       <ChevronRight size={22} color="#fff" />
                     </div>
 
                   </div>
-
                 </motion.div>
               )
             })}
