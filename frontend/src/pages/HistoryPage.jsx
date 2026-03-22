@@ -342,7 +342,6 @@ export default function HistoryPage() {
                   <div style={{ flex: '1 1 250px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
 
                     <div>
-                    // AFTER
                       <h2 style={{
                         fontFamily: "'Poppins', sans-serif",
                         fontSize: 'clamp(16px, 4vw, 22px)', fontWeight: 700, color: '#fff',
