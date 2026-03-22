@@ -171,31 +171,40 @@ export default function HistoryPage() {
         backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}>
+
         <div style={{
-          width: '100%', maxWidth: 1100, padding: '0 24px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+          width: '100%', maxWidth: 1100, padding: '0 16px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 8,
         }}>
+
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => navigate('/')}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              padding: '8px 20px',
+              padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 20px)',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
               backgroundSize: '200% auto',
               border: 'none', borderRadius: 100,
               color: '#fff', fontFamily: "'Inter', sans-serif",
-              fontSize: 14, fontWeight: 600, cursor: 'pointer',
+              fontSize: 'clamp(11px, 2.5vw, 14px)',
+              fontWeight: 600, cursor: 'pointer',
+              whiteSpace: 'nowrap',
               boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
             }}
           >
             <ArrowLeft size={16} /> Dashboard
           </motion.button>
 
+
           <div style={{
             fontFamily: "'Poppins', sans-serif",
-            fontSize: 16, fontWeight: 600, color: '#fff', letterSpacing: '0.5px'
+            fontSize: 'clamp(12px, 3vw, 16px)', fontWeight: 600, color: '#fff',
+            letterSpacing: '0.5px', flexShrink: 0,
+            whiteSpace: 'nowrap',
           }}>
+
             TripPlanner ✈️
           </div>
 
@@ -204,16 +213,19 @@ export default function HistoryPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => navigate('/plan')}
             style={{
-              padding: '8px 20px',
+              padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 20px)',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
               backgroundSize: '200% auto',
               border: 'none', borderRadius: 100,
               color: '#fff', fontFamily: "'Inter', sans-serif",
-              fontSize: 14, fontWeight: 600, cursor: 'pointer',
+              fontSize: 'clamp(11px, 2.5vw, 14px)',
+              fontWeight: 600, cursor: 'pointer',
+              whiteSpace: 'nowrap',
               boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
             }}>
             + New Trip
           </motion.button>
+
         </div>
       </div>
 
@@ -327,13 +339,18 @@ export default function HistoryPage() {
                 >
 
                   {/* Left Column: Title & Meta */}
-                  <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ flex: '1 1 250px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+
                     <div>
+                    // AFTER
                       <h2 style={{
                         fontFamily: "'Poppins', sans-serif",
-                        fontSize: 22, fontWeight: 700, color: '#fff',
-                        margin: 0, display: 'flex', alignItems: 'center', gap: 10
+                        fontSize: 'clamp(16px, 4vw, 22px)', fontWeight: 700, color: '#fff',
+                        margin: 0, display: 'flex', alignItems: 'center', gap: 10,
+                        flexWrap: 'wrap',         // ← allows wrapping on very small screens
+                        wordBreak: 'break-word',  // ← prevents overflow
                       }}>
+
                         {trip?.origin}
                         <Plane size={18} color="#7b61ff" style={{ opacity: 0.8 }} />
                         {trip?.destination}
@@ -351,7 +368,8 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Chips Row */}
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', minWidth: 0 }}>
+
                       {[
                         { icon: '🗓', label: `${trip?.start_date} — ${trip?.end_date}` },
                         { icon: '📍', label: trip?.destination },
