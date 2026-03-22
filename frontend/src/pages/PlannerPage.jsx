@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import DatePicker from 'react-datepicker'
@@ -228,6 +228,18 @@ export default function PlannerPage() {
 
   const filteredCities = CITIES.filter(c => c.toLowerCase().includes(citySearch.toLowerCase()))
 
+  const progressRef = useRef(null)
+
+  useEffect(() => {
+    if (progressRef.current) {
+      const activeEl = progressRef.current.querySelector('[data-active="true"]')
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+      }
+    }
+  }, [step])
+
+
 
   return (
     <>
@@ -264,7 +276,7 @@ export default function PlannerPage() {
 
 
         {/* Step Progress Bar (Capsules) */}
-        <div style={{
+        <div ref={progressRef} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           marginBottom: 32, zIndex: 1,
           overflowX: 'auto', padding: '12px 16px',
@@ -275,10 +287,10 @@ export default function PlannerPage() {
             const done = step > s.id
             const active = step === s.id
 
-
             return (
               <div key={s.id} style={{ display: 'flex', alignItems: 'center' }}>
                 <motion.div
+                  data-active={active ? "true" : "false"}
                   onClick={() => done && paginate(s.id)}
                   whileHover={done ? { scale: 1.05 } : {}}
                   style={{
@@ -663,7 +675,7 @@ export default function PlannerPage() {
             width: 100%;
           }
         `}</style>
-      </motion.div>
+      </motion.div >
     </>
   )
 }
