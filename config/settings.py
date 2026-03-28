@@ -6,10 +6,6 @@ from pathlib import Path
 from decouple import config, Csv
 from datetime import timedelta
 
-import pymysql
-pymysql.version_info = (2, 2, 1, 'final', 0)   # ✅ fakes version to satisfy Django check
-pymysql.install_as_MySQLdb()                     # ✅ replaces MySQLdb with PyMySQL
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ── Security ──────────────────────────────────────────────────
@@ -82,18 +78,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # ── Database ──────────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
+
+
 
 # ── Password Validation ───────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
