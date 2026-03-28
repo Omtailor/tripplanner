@@ -426,7 +426,6 @@ export default function DashboardPage() {
               {/* Arrow Button — disabled when limit exhausted */}
               <button
                 onClick={handleSearch}
-                disabled={isLimitExhausted}
                 style={{
                   width: 54, height: 54, borderRadius: 14, flexShrink: 0,
                   background: isLimitExhausted
@@ -450,7 +449,10 @@ export default function DashboardPage() {
                   e.currentTarget.style.boxShadow = '0 6px 28px rgba(79,142,247,0.6)'
                 }}
                 onMouseLeave={e => {
-                  if (isLimitExhausted) return
+                  if (isLimitExhausted) {
+                    e.currentTarget.style.transform = 'scale(1)'
+                    return
+                  }
                   e.currentTarget.style.transform = 'scale(1)'
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(79,142,247,0.45)'
                 }}
