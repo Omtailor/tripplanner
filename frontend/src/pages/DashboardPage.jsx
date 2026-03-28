@@ -167,11 +167,15 @@ export default function DashboardPage() {
   }
 
   const handleSearch = () => {
+    if (!searchVal.trim()) {
+      toast.error('Please enter a destination first!')
+      return
+    }
     if (rateLimit.remaining === 0) {
       toast.error('Daily limit reached. Try again tomorrow.')
       return
     }
-    navigate('/plan', { state: { destination: searchVal } })
+    navigate('/plan', { state: { destination: searchVal.trim() } })
   }
 
   return (
