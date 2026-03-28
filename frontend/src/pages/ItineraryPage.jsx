@@ -11,6 +11,7 @@ import ItineraryPDF from '../components/itinerary/ItineraryPDF'
 
 
 
+
 export default function ItineraryPage() {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -20,12 +21,14 @@ export default function ItineraryPage() {
     const [showSuccessBanner, setShowSuccessBanner] = useState(false)
 
 
+
     useEffect(() => {
         api.get(`/itinerary/${id}/`)
             .then(res => setItinerary(res.data))
             .catch(() => toast.error('Failed to load itinerary'))
             .finally(() => setLoading(false))
     }, [id])
+
 
 
     const regenDay = async (dayNumber) => {
@@ -46,6 +49,7 @@ export default function ItineraryPage() {
     }
 
 
+
     if (loading) return (
         <div style={{
             minHeight: '100vh', display: 'flex', alignItems: 'center',
@@ -60,12 +64,15 @@ export default function ItineraryPage() {
     )
 
 
+
     if (!itinerary) return null
+
 
 
     const days = itinerary.days || []
     const summary = itinerary.summary || {}
     const trip = itinerary.trip
+
 
 
     const chartData = [
@@ -78,11 +85,13 @@ export default function ItineraryPage() {
     const COLORS = ['#4f8ef7', '#a855f7', '#2dd4bf', '#f472b6', '#fb923c']
 
 
+
     return (
         <div style={{
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #050508 0%, #0d0d1a 50%, #050508 100%)',
         }}>
+
 
 
             {/* Background orbs */}
@@ -100,72 +109,62 @@ export default function ItineraryPage() {
             </div>
 
 
-            {/* ✅ CHANGED: Sticky Navbar — flexWrap + clamp font/padding on buttons */}
 
-            {/* Sticky Navbar — 2 rows on mobile */}
+            {/* ✅ CHANGED: Sticky Navbar — flexWrap + clamp font/padding on buttons */}
             <div style={{
                 position: 'sticky', top: 0, zIndex: 50,
+                padding: 'clamp(10px, 2vw, 16px) clamp(14px, 3vw, 32px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                flexWrap: 'wrap', gap: 10,
                 background: 'rgba(5,5,8,0.88)',
                 backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
                 borderBottom: '1px solid rgba(255,255,255,0.07)',
             }}>
-
-                {/* Row 1: Dashboard (left) + Trip Title (center) */}
-                <div style={{
-                    padding: 'clamp(10px, 2vw, 14px) clamp(14px, 3vw, 32px) 0',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    gap: 10,
+                <button onClick={() => navigate('/')} style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100,
+                    color: 'rgba(255,255,255,0.7)', fontFamily: "'Inter', sans-serif",
+                    fontSize: 'clamp(13px, 2vw, 16px)', cursor: 'pointer',
                 }}>
-                    <button onClick={() => navigate('/')} style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: '8px 16px',
-                        background: 'rgba(255,255,255,0.06)',
-                        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100,
-                        color: 'rgba(255,255,255,0.7)', fontFamily: "'Inter', sans-serif",
-                        fontSize: 'clamp(12px, 2vw, 15px)', cursor: 'pointer',
-                        whiteSpace: 'nowrap', flexShrink: 0,
+                    <ArrowLeft size={16} /> Dashboard
+                </button>
+
+
+
+                <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 8px' }}>
+                    <div style={{
+                        fontFamily: "'Poppins', sans-serif",
+                        fontSize: 'clamp(13px, 3vw, 21px)',
+                        fontWeight: 700, color: '#fff',
+                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>
-                        <ArrowLeft size={15} /> Dashboard
-                    </button>
-
-                    <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 8px' }}>
-                        <div style={{
-                            fontFamily: "'Poppins', sans-serif",
-                            fontSize: 'clamp(13px, 3vw, 20px)',
-                            fontWeight: 700, color: '#fff',
-                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                        }}>
-                            {trip?.origin} → {trip?.destination}
-                        </div>
-                        <div style={{
-                            fontFamily: "'Inter', sans-serif",
-                            fontSize: 'clamp(10px, 1.5vw, 13px)',
-                            color: 'rgba(255,255,255,0.38)', marginTop: 2,
-                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                        }}>
-                            {trip?.start_date} · {days.length} days · {trip?.group_type} · {trip?.budget_tier}
-                        </div>
+                        {trip?.origin} → {trip?.destination}
                     </div>
-
-                    {/* Invisible spacer to keep title truly centered */}
-                    <div style={{ width: 'clamp(90px, 15vw, 120px)', flexShrink: 0 }} />
+                    <div style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 'clamp(11px, 1.5vw, 14px)',
+                        color: 'rgba(255,255,255,0.38)', marginTop: 2,
+                        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                    }}>
+                        {trip?.start_date} · {days.length} days · {trip?.group_type} · {trip?.budget_tier}
+                    </div>
                 </div>
 
-                {/* Row 2: Export PDF + History */}
-                <div style={{
-                    padding: 'clamp(8px, 1.5vw, 10px) clamp(14px, 3vw, 32px) clamp(10px, 2vw, 14px)',
-                    display: 'flex', alignItems: 'center', gap: 10,
-                }}>
+
+
+                <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                     {itinerary && (
                         <PDFDownloadLink
                             document={<ItineraryPDF itinerary={itinerary} />}
                             fileName={`${trip?.destination}-itinerary.pdf`}
-                            style={{ textDecoration: 'none', flexShrink: 0 }}
+                            style={{ textDecoration: 'none' }}
                         >
                             {({ loading }) => (
                                 <button style={{
                                     display: 'flex', alignItems: 'center', gap: 7,
-                                    padding: '8px 16px',
+                                    padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
                                     background: loading
                                         ? 'rgba(255,255,255,0.04)'
                                         : 'linear-gradient(135deg, rgba(79,142,247,0.25), rgba(168,85,247,0.2))',
@@ -173,38 +172,40 @@ export default function ItineraryPage() {
                                     borderRadius: 100,
                                     color: loading ? 'rgba(255,255,255,0.35)' : '#7eb3ff',
                                     fontFamily: "'Inter', sans-serif",
-                                    fontSize: 'clamp(12px, 2vw, 15px)',
+                                    fontSize: 'clamp(13px, 2vw, 16px)',
                                     cursor: loading ? 'not-allowed' : 'pointer',
                                     transition: 'all 0.2s ease',
                                     whiteSpace: 'nowrap',
                                 }}>
                                     {loading
                                         ? <><ClipLoader size={13} color="#7eb3ff" /> Preparing...</>
-                                        : <><Download size={15} /> Export PDF</>
+                                        : <><Download size={16} /> Export PDF</>
                                     }
                                 </button>
                             )}
                         </PDFDownloadLink>
                     )}
 
+
+
                     <button onClick={() => navigate('/history')} style={{
-                        padding: '8px 16px',
+                        padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
                         background: 'rgba(255,255,255,0.06)',
                         border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100,
                         color: 'rgba(255,255,255,0.6)', fontFamily: "'Inter', sans-serif",
-                        fontSize: 'clamp(12px, 2vw, 15px)', cursor: 'pointer',
-                        whiteSpace: 'nowrap', flexShrink: 0,
+                        fontSize: 'clamp(13px, 2vw, 16px)', cursor: 'pointer',
+                        whiteSpace: 'nowrap',
                     }}>
                         History
                     </button>
                 </div>
-
             </div>
 
 
 
             {/* Page Content */}
             <div style={{ maxWidth: 860, margin: '0 auto', padding: 'clamp(24px, 5vw, 44px) clamp(14px, 3vw, 24px) 80px', position: 'relative', zIndex: 1 }}>
+
 
 
                 {/* Hero Header */}
@@ -239,6 +240,7 @@ export default function ItineraryPage() {
                     </div>
 
 
+
                     {summary.grand_total_inr && (
                         <div style={{
                             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -260,6 +262,7 @@ export default function ItineraryPage() {
                 </motion.div>
 
 
+
                 {/* Day Cards */}
                 {days.map((day, index) => (
                     <motion.div key={day.day_number}
@@ -276,6 +279,7 @@ export default function ItineraryPage() {
                             borderRadius: 24, overflow: 'hidden',
                             boxShadow: '0 16px 50px rgba(0,0,0,0.5)',
                         }}>
+
 
 
                             {/* ✅ CHANGED: Day Header — flexWrap so regen button drops below on mobile */}
@@ -325,6 +329,7 @@ export default function ItineraryPage() {
                                 </div>
 
 
+
                                 {/* Regenerate Button */}
                                 <button
                                     className="regen-btn"
@@ -357,8 +362,10 @@ export default function ItineraryPage() {
                             </div>
 
 
+
                             {/* Day Body */}
                             <div style={{ padding: 'clamp(16px, 3vw, 26px) clamp(16px, 3vw, 30px)', display: 'flex', flexDirection: 'column', gap: 22 }}>
+
 
 
                                 {/* ✅ CHANGED: Meals Row — auto-fit collapses to 1 col on mobile */}
@@ -391,6 +398,7 @@ export default function ItineraryPage() {
                                 </div>
 
 
+
                                 {/* Activities */}
                                 <div>
                                     <div style={{
@@ -413,6 +421,7 @@ export default function ItineraryPage() {
                                                     borderRadius: 10, fontFamily: "'Inter', sans-serif",
                                                     fontSize: 13, fontWeight: 700, color: '#7eb3ff',
                                                 }}>{act.time}</div>
+
 
 
                                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -452,6 +461,7 @@ export default function ItineraryPage() {
                                 </div>
 
 
+
                                 {/* ✅ CHANGED: Bottom Info — auto-fit collapses to 2 col on mobile */}
                                 <div className="info-grid" style={{
                                     display: 'grid',
@@ -464,10 +474,12 @@ export default function ItineraryPage() {
                                 </div>
 
 
+
                             </div>
                         </div>
                     </motion.div>
                 ))}
+
 
 
                 {/* Summary Section */}
@@ -489,6 +501,7 @@ export default function ItineraryPage() {
                             }}>
                                 💰 Cost Breakdown
                             </h3>
+
 
 
                             <ResponsiveContainer width="100%" height={220}>
@@ -527,6 +540,7 @@ export default function ItineraryPage() {
                             </ResponsiveContainer>
 
 
+
                             <div style={{
                                 padding: 'clamp(14px, 2vw, 20px) clamp(16px, 3vw, 26px)', marginTop: 20,
                                 background: 'linear-gradient(135deg, rgba(79,142,247,0.15), rgba(168,85,247,0.1))',
@@ -549,6 +563,7 @@ export default function ItineraryPage() {
                                     ₹{summary.grand_total_inr?.toLocaleString()}
                                 </span>
                             </div>
+
 
 
                             {summary.travel_tips?.length > 0 && (
@@ -578,7 +593,9 @@ export default function ItineraryPage() {
                 )}
 
 
+
             </div>
+
 
 
             {/* Center Success Popup */}
@@ -621,9 +638,11 @@ export default function ItineraryPage() {
             </AnimatePresence>
 
 
+
             {/* ✅ CHANGED: media queries added */}
             <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
 
 
         @media (max-width: 480px) {
@@ -642,6 +661,7 @@ export default function ItineraryPage() {
         </div>
     )
 }
+
 
 
 
