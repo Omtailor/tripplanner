@@ -13,6 +13,7 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
       position: 'fixed', inset: 0, zIndex: 100,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)',
+      padding: '16px',
     }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -23,7 +24,7 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
           background: 'rgba(12,16,34,0.95)',
           border: '1px solid rgba(239,68,68,0.25)',
           borderRadius: 24, padding: '32px 28px',
-          maxWidth: 380, width: '90%',
+          maxWidth: 380, width: '100%',
           boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
           textAlign: 'center',
         }}
@@ -40,15 +41,17 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
 
         <h3 style={{
           fontFamily: "'Poppins', sans-serif",
-          fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 12,
+          fontSize: 'clamp(18px, 4vw, 20px)',
+          fontWeight: 700, color: '#fff', marginBottom: 12, marginTop: 0,
         }}>
           Delete this trip?
         </h3>
 
         <p style={{
           fontFamily: "'Inter', sans-serif",
-          fontSize: 15, color: 'rgba(255,255,255,0.6)',
-          lineHeight: 1.6, marginBottom: 32,
+          fontSize: 'clamp(13px, 3vw, 15px)',
+          color: 'rgba(255,255,255,0.6)',
+          lineHeight: 1.6, marginBottom: 32, margin: '12px 0 32px 0',
         }}>
           Your <span style={{ color: '#fff', fontWeight: 600 }}>{destination}</span> itinerary
           will be permanently deleted. This action cannot be undone.
@@ -56,13 +59,14 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
 
         <div style={{ display: 'flex', gap: 12 }}>
           <button onClick={onCancel} style={{
-            flex: 1, padding: '14px',
+            flex: 1, padding: '12px 16px',
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 14, color: 'rgba(255,255,255,0.8)',
             fontFamily: "'Inter', sans-serif",
-            fontSize: 15, fontWeight: 500, cursor: 'pointer',
-            transition: 'all 0.2s'
+            fontSize: 'clamp(13px, 2.5vw, 15px)',
+            fontWeight: 500, cursor: 'pointer',
+            transition: 'all 0.2s',
           }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
@@ -70,13 +74,14 @@ function ConfirmDialog({ destination, onConfirm, onCancel }) {
             Cancel
           </button>
           <button onClick={onConfirm} style={{
-            flex: 1, padding: '14px',
+            flex: 1, padding: '12px 16px',
             background: 'rgba(239,68,68,0.15)',
             border: '1px solid rgba(239,68,68,0.3)',
             borderRadius: 14, color: '#ef4444',
             fontFamily: "'Inter', sans-serif",
-            fontSize: 15, fontWeight: 600, cursor: 'pointer',
-            transition: 'all 0.2s'
+            fontSize: 'clamp(13px, 2.5vw, 15px)',
+            fontWeight: 600, cursor: 'pointer',
+            transition: 'all 0.2s',
           }}
             onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.25)'}
             onMouseLeave={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
@@ -162,67 +167,80 @@ export default function HistoryPage() {
         )}
       </AnimatePresence>
 
-      {/* Glass Navbar */}
+      {/* Glass Navbar — FIXED FOR RESPONSIVENESS */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        height: 64, width: '100%',
+        minHeight: 64, width: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(5, 10, 25, 0.7)',
         backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
+        padding: '12px 16px',
       }}>
 
         <div style={{
-          width: '100%', maxWidth: 1100, padding: '0 16px',
+          width: '100%', maxWidth: 1100,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 8,
+          gap: 'clamp(8px, 2vw, 20px)',
+          flexWrap: 'wrap',
         }}>
 
+          {/* Dashboard Button */}
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => navigate('/')}
             style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 20px)',
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '8px 16px',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
               backgroundSize: '200% auto',
               border: 'none', borderRadius: 100,
               color: '#fff', fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(11px, 2.5vw, 14px)',
+              fontSize: 'clamp(12px, 2vw, 14px)',
               fontWeight: 600, cursor: 'pointer',
               whiteSpace: 'nowrap',
               boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
+              transition: 'all 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.backgroundPosition = '100% 0'}
+            onMouseLeave={e => e.currentTarget.style.backgroundPosition = '0% 0'}
           >
-            <ArrowLeft size={16} /> Dashboard
+            <ArrowLeft size={14} style={{ minWidth: 14 }} /> Dashboard
           </motion.button>
 
-
+          {/* Logo — flexible center */}
           <div style={{
             fontFamily: "'Poppins', sans-serif",
-            fontSize: 'clamp(12px, 3vw, 16px)', fontWeight: 600, color: '#fff',
+            fontSize: 'clamp(13px, 2.5vw, 16px)',
+            fontWeight: 700, color: '#fff',
             letterSpacing: '0.5px', flexShrink: 0,
             whiteSpace: 'nowrap',
+            flex: '1 1 auto',
+            textAlign: 'center',
+            minWidth: 120,
           }}>
-
             TripPlanner ✈️
           </div>
 
+          {/* New Trip Button */}
           <motion.button
-            whileHover={{ backgroundPosition: '100% 0' }}
             whileTap={{ scale: 0.96 }}
             onClick={() => navigate('/plan')}
             style={{
-              padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 20px)',
+              padding: '8px 16px',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
               backgroundSize: '200% auto',
               border: 'none', borderRadius: 100,
               color: '#fff', fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(11px, 2.5vw, 14px)',
+              fontSize: 'clamp(12px, 2vw, 14px)',
               fontWeight: 600, cursor: 'pointer',
               whiteSpace: 'nowrap',
               boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 4px 16px rgba(123,97,255,0.2)',
-            }}>
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.backgroundPosition = '100% 0'}
+            onMouseLeave={e => e.currentTarget.style.backgroundPosition = '0% 0'}
+          >
             + New Trip
           </motion.button>
 
@@ -232,7 +250,7 @@ export default function HistoryPage() {
       {/* Main Content Area */}
       <div style={{
         maxWidth: 1100, margin: '0 auto',
-        padding: '64px 24px 100px',
+        padding: 'clamp(40px, 8vw, 64px) clamp(16px, 4vw, 24px) 100px',
         position: 'relative', zIndex: 1,
       }}>
 
@@ -248,14 +266,18 @@ export default function HistoryPage() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ position: 'relative', zIndex: 1 }}>
             <h1 style={{
               fontFamily: "'Poppins', sans-serif",
-              fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 800, color: '#fff',
-              display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8
+              fontSize: 'clamp(24px, 5vw, 36px)',
+              fontWeight: 800, color: '#fff',
+              display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8,
+              marginTop: 0,
+              flexWrap: 'wrap',
             }}>
-              <span style={{ fontSize: '1.1em' }}>🗂️</span> Your Travel History
+              <span style={{ fontSize: '1.1em', minWidth: 28 }}>🗂️</span> Your Travel History
             </h1>
             <p style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: 16, color: 'rgba(255,255,255,0.65)', marginLeft: 4
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              color: 'rgba(255,255,255,0.65)', marginLeft: 0, marginTop: 8, margin: '8px 0 0 0'
             }}>
               {trips.length} trip{trips.length !== 1 ? 's' : ''} planned so far
             </p>
@@ -266,7 +288,7 @@ export default function HistoryPage() {
         {trips.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             style={{
-              textAlign: 'center', padding: '80px 40px',
+              textAlign: 'center', padding: 'clamp(40px, 8vw, 80px) clamp(24px, 6vw, 40px)',
               background: 'rgba(255,255,255,0.03)',
               backdropFilter: 'blur(20px)',
               border: '1px solid rgba(255,255,255,0.08)',
@@ -281,20 +303,27 @@ export default function HistoryPage() {
             </div>
             <p style={{
               fontFamily: "'Poppins', sans-serif",
-              fontSize: 22, fontWeight: 600, color: '#fff', marginBottom: 12,
+              fontSize: 'clamp(18px, 4vw, 22px)',
+              fontWeight: 600, color: '#fff', marginBottom: 12, marginTop: 0,
             }}>No trips yet</p>
             <p style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 32,
+              fontSize: 'clamp(13px, 2vw, 15px)',
+              color: 'rgba(255,255,255,0.5)', marginBottom: 32,
             }}>Start by planning your first adventure.</p>
             <button onClick={() => navigate('/plan')} style={{
-              padding: '14px 32px',
+              padding: '12px 32px',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7)',
               border: 'none', borderRadius: 100,
               color: '#fff', fontFamily: "'Inter', sans-serif",
-              fontSize: 16, fontWeight: 600, cursor: 'pointer',
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              fontWeight: 600, cursor: 'pointer',
               boxShadow: '0 8px 24px rgba(123,97,255,0.3)',
-            }}>
+              transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
               Plan a trip
             </button>
           </motion.div>
@@ -326,15 +355,15 @@ export default function HistoryPage() {
                     backdropFilter: 'blur(20px) saturate(160%)',
                     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
                     border: '1px solid rgba(255, 255, 255, 0.10)',
-                    borderTop: '1px solid rgba(255,255,255,0.15)', // ← replaces the absolute highlight div
+                    borderTop: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: 16,
-                    padding: '24px',
+                    padding: 'clamp(16px, 4vw, 24px)',
                     boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
                     cursor: isDeleting ? 'default' : 'pointer',
                     opacity: isDeleting ? 0.5 : 1,
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    flexWrap: 'wrap', gap: 20,
-                    overflow: 'visible', // ✅ FIXED: was 'hidden', which clipped the Trash2 SVG
+                    flexWrap: 'wrap', gap: 'clamp(12px, 3vw, 20px)',
+                    overflow: 'visible',
                   }}
                 >
 
@@ -344,22 +373,23 @@ export default function HistoryPage() {
                     <div>
                       <h2 style={{
                         fontFamily: "'Poppins', sans-serif",
-                        fontSize: 'clamp(16px, 4vw, 22px)', fontWeight: 700, color: '#fff',
+                        fontSize: 'clamp(14px, 4vw, 22px)',
+                        fontWeight: 700, color: '#fff',
                         margin: 0, display: 'flex', alignItems: 'center', gap: 10,
-                        flexWrap: 'wrap',         // ← allows wrapping on very small screens
-                        wordBreak: 'break-word',  // ← prevents overflow
+                        flexWrap: 'wrap',
+                        wordBreak: 'break-word',
                       }}>
-
                         {trip?.origin}
-                        <Plane size={18} color="#7b61ff" style={{ opacity: 0.8 }} />
+                        <Plane size={16} color="#7b61ff" style={{ opacity: 0.8, minWidth: 16 }} />
                         {trip?.destination}
                       </h2>
                       <div style={{
                         fontFamily: "'Inter', sans-serif",
-                        fontSize: 13, color: 'rgba(255,255,255,0.5)',
+                        fontSize: 'clamp(12px, 2vw, 13px)',
+                        color: 'rgba(255,255,255,0.5)',
                         display: 'flex', alignItems: 'center', gap: 6, marginTop: 6
                       }}>
-                        <Calendar size={13} />
+                        <Calendar size={12} style={{ minWidth: 12 }} />
                         Created {new Date(item.created_at).toLocaleDateString('en-IN', {
                           day: 'numeric', month: 'short', year: 'numeric'
                         })}
@@ -377,12 +407,14 @@ export default function HistoryPage() {
                       ].map(tag => (
                         <div key={tag.label} style={{
                           display: 'flex', alignItems: 'center', gap: 6,
-                          padding: '6px 14px', borderRadius: 999,
+                          padding: '6px 12px', borderRadius: 999,
                           background: 'rgba(255,255,255,0.08)',
                           border: '1px solid rgba(255,255,255,0.15)',
                           fontFamily: "'Inter', sans-serif",
-                          fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.8)',
+                          fontSize: 'clamp(11px, 2vw, 12px)',
+                          fontWeight: 600, color: 'rgba(255,255,255,0.8)',
                           textTransform: 'capitalize',
+                          whiteSpace: 'nowrap',
                         }}>
                           <span>{tag.icon}</span> {tag.label}
                         </div>
@@ -391,9 +423,9 @@ export default function HistoryPage() {
                   </div>
 
                   {/* Right Column: Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
 
-                    {/* ✅ Delete Button — fixed */}
+                    {/* Delete Button */}
                     <button
                       onClick={e => {
                         e.stopPropagation()
@@ -413,14 +445,16 @@ export default function HistoryPage() {
                         padding: 0,
                         outline: 'none',
                         flexShrink: 0,
-                        overflow: 'visible', // ✅ never clip SVG
+                        overflow: 'visible',
                         cursor: isDeleting ? 'not-allowed' : 'pointer',
                         boxShadow: '0 4px 14px rgba(239,68,68,0.45)',
                         transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.transform = 'scale(1.1)'
-                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,68,68,0.65)'
+                        if (!isDeleting) {
+                          e.currentTarget.style.transform = 'scale(1.1)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(239,68,68,0.65)'
+                        }
                       }}
                       onMouseLeave={e => {
                         e.currentTarget.style.transform = 'scale(1)'
@@ -441,7 +475,7 @@ export default function HistoryPage() {
                       transition: 'all 0.2s',
                       flexShrink: 0,
                     }}>
-                      <ChevronRight size={22} color="#fff" />
+                      <ChevronRight size={20} color="#fff" />
                     </div>
 
                   </div>
