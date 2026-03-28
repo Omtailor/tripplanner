@@ -22,6 +22,77 @@ const TYPEWRITER_DESTINATIONS = [
   'Ladakh on a bike...',
 ]
 
+// ── Limit Modal ───────────────────────────────────────────────
+function LimitModal({ onClose }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(0,0,0,0.65)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.88, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.88, y: 24 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'rgba(8,8,20,0.97)',
+          border: '1px solid rgba(255,255,255,0.13)',
+          borderRadius: 20,
+          padding: 'clamp(24px, 5vw, 36px)',
+          maxWidth: 380, width: '100%',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 40, marginBottom: 12 }}>🚫</div>
+        <h2 style={{
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: 'clamp(17px, 4vw, 20px)',
+          fontWeight: 700, color: '#fff',
+          marginBottom: 8, marginTop: 0,
+        }}>
+          Daily Limit Reached
+        </h2>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 'clamp(13px, 3vw, 14px)',
+          color: 'rgba(255,255,255,0.55)',
+          lineHeight: 1.7, marginBottom: 24,
+        }}>
+          You've used all{' '}
+          <span style={{ color: '#7eb3ff', fontWeight: 600 }}>5 itinerary generations</span>{' '}
+          for today.<br />
+          Your limit resets at{' '}
+          <span style={{ color: '#2dd4bf', fontWeight: 600 }}>12:00 AM midnight</span>.
+        </p>
+        <button
+          onClick={onClose}
+          style={{
+            padding: '10px 28px', borderRadius: 100,
+            background: 'linear-gradient(135deg, #4f8ef7, #a855f7)',
+            border: 'none', color: '#fff',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          Got it
+        </button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 // ── Tooltip Component ─────────────────────────────────────────
 function LimitTooltip({ children, remaining }) {
   const [show, setShow] = useState(false)
@@ -31,7 +102,7 @@ function LimitTooltip({ children, remaining }) {
       style={{ position: 'relative', display: 'inline-flex', alignItems: 'stretch' }}
       onMouseEnter={() => setShow(true)}
       onMouseLeave={() => setShow(false)}
-      onClick={() => setShow(prev => !prev)}   // ✅ toggle on click
+      onClick={() => setShow(prev => !prev)}
     >
       {children}
 
@@ -44,7 +115,7 @@ function LimitTooltip({ children, remaining }) {
             transition={{ duration: 0.15 }}
             style={{
               position: 'absolute',
-              top: 'calc(100% + 12px)',          // ✅ BELOW the button
+              top: 'calc(100% + 12px)',
               left: '50%',
               transform: 'translateX(-50%)',
               whiteSpace: 'nowrap',
@@ -60,12 +131,12 @@ function LimitTooltip({ children, remaining }) {
             {/* Arrow pointing UP */}
             <div style={{
               position: 'absolute',
-              top: -5,                           // ✅ arrow at top
+              top: -5,
               left: '50%',
               width: 10, height: 10,
               background: 'rgba(8,8,20,0.97)',
               border: '1px solid rgba(255,255,255,0.13)',
-              borderBottom: 'none', borderRight: 'none',  // ✅ top-left borders only
+              borderBottom: 'none', borderRight: 'none',
               transform: 'translateX(-50%) rotate(45deg)',
             }} />
 
@@ -96,7 +167,7 @@ function LimitTooltip({ children, remaining }) {
   )
 }
 
-
+// ── Dashboard Page ────────────────────────────────────────────
 export default function DashboardPage() {
   const [current, setCurrent] = useState(0)
   const [typeText, setTypeText] = useState('')
@@ -105,8 +176,11 @@ export default function DashboardPage() {
   const [deleting, setDeleting] = useState(false)
   const [rateLimit, setRateLimit] = useState({ remaining: 5, limit: 5 })
   const [searchVal, setSearchVal] = useState('')
-  const { user, logout } = useAuth()
+  const [showLimitModal, setShowLimitModal] = useState(false)
+  const { logout } = useAuth()
   const navigate = useNavigate()
+
+  const isLimitExhausted = rateLimit.remaining === 0
 
   // Preload images
   useEffect(() => {
@@ -171,8 +245,8 @@ export default function DashboardPage() {
       toast.error('Please enter a destination first!')
       return
     }
-    if (rateLimit.remaining === 0) {
-      toast.error('Daily limit reached. Try again tomorrow.')
+    if (isLimitExhausted) {
+      setShowLimitModal(true)
       return
     }
     navigate('/plan', { state: { destination: searchVal.trim() } })
@@ -214,22 +288,25 @@ export default function DashboardPage() {
           <button style={{
             display: 'flex', alignItems: 'center', gap: 6,
             height: 36, padding: '0 14px', borderRadius: 100,
-            // ✅ same dark glass as search card
-            background: rateLimit.remaining === 0
+            background: isLimitExhausted
               ? 'rgba(248,113,113,0.15)'
               : 'rgba(8,8,18,0.40)',
             backdropFilter: 'blur(40px) saturate(180%)',
             WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-            border: rateLimit.remaining === 0
+            border: isLimitExhausted
               ? '1px solid rgba(248,113,113,0.3)'
               : '1px solid rgba(255,255,255,0.13)',
             cursor: 'pointer', boxSizing: 'border-box', margin: 0,
             fontFamily: "'Inter', sans-serif", fontSize: 13,
           }}>
-            <Zap size={13} color={rateLimit.remaining === 0 ? '#f87171' : '#fbbf24'} fill={rateLimit.remaining === 0 ? '#f87171' : '#fbbf24'} />
+            <Zap
+              size={13}
+              color={isLimitExhausted ? '#f87171' : '#fbbf24'}
+              fill={isLimitExhausted ? '#f87171' : '#fbbf24'}
+            />
             <span style={{
               fontWeight: 600,
-              color: rateLimit.remaining === 0 ? '#f87171' : 'rgba(255,255,255,0.85)',
+              color: isLimitExhausted ? '#f87171' : 'rgba(255,255,255,0.85)',
             }}>
               {rateLimit.remaining}/{rateLimit.limit} left
             </span>
@@ -240,7 +317,6 @@ export default function DashboardPage() {
         <button onClick={() => navigate('/history')} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           height: 36, padding: '0 14px', borderRadius: 100,
-          // ✅ identical glass style
           background: 'rgba(8,8,18,0.40)',
           backdropFilter: 'blur(40px) saturate(180%)',
           WebkitBackdropFilter: 'blur(40px) saturate(180%)',
@@ -256,7 +332,6 @@ export default function DashboardPage() {
         <button onClick={handleLogout} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           height: 36, padding: '0 14px', borderRadius: 100,
-          // ✅ identical glass style
           background: 'rgba(8,8,18,0.40)',
           backdropFilter: 'blur(40px) saturate(180%)',
           WebkitBackdropFilter: 'blur(40px) saturate(180%)',
@@ -269,8 +344,6 @@ export default function DashboardPage() {
         </button>
       </div>
 
-
-
       {/* Center Content */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 5,
@@ -278,20 +351,23 @@ export default function DashboardPage() {
         alignItems: 'center', justifyContent: 'center',
         padding: '24px', gap: 32,
       }}>
+
         {/* Hero Text */}
         <div style={{ textAlign: 'center', animation: 'fadeInUp 0.7s ease both' }}>
           <h1 style={{
             fontFamily: "'Poppins', sans-serif",
             fontSize: 'clamp(28px, 6vw, 52px)', fontWeight: 800, color: '#ffffff',
             textShadow: '0 2px 24px rgba(0,0,0,0.5)',
-            lineHeight: 1.15, marginBottom: 12,
+            lineHeight: 1.15, marginBottom: 12, marginTop: 0,
           }}>
             Where to next?
           </h1>
           <p style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: 18, color: 'rgba(255,255,255,0.65)',
+            fontSize: 'clamp(14px, 2.5vw, 18px)',
+            color: 'rgba(255,255,255,0.65)',
             textShadow: '0 1px 8px rgba(0,0,0,0.4)',
+            margin: 0,
           }}>
             Your AI travel planner — personalized, instant, beautiful.
           </p>
@@ -318,7 +394,7 @@ export default function DashboardPage() {
 
             {/* Search Input Row */}
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ flex: 1, position: 'relative' }}>
+              <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
                 <input
                   value={searchVal}
                   onChange={e => setSearchVal(e.target.value)}
@@ -347,63 +423,59 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <button onClick={handleSearch} style={{
-                width: 54, height: 54, borderRadius: 14,
-                background: 'linear-gradient(135deg, #4f8ef7, #a855f7)',
-                border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 22, boxShadow: '0 4px 20px rgba(79,142,247,0.45)',
-                transition: 'all 0.25s ease', flexShrink: 0,
-              }}
+              {/* Arrow Button — disabled when limit exhausted */}
+              <button
+                onClick={handleSearch}
+                disabled={isLimitExhausted}
+                style={{
+                  width: 54, height: 54, borderRadius: 14, flexShrink: 0,
+                  background: isLimitExhausted
+                    ? 'rgba(255,255,255,0.08)'
+                    : 'linear-gradient(135deg, #4f8ef7, #a855f7)',
+                  border: isLimitExhausted
+                    ? '1px solid rgba(255,255,255,0.1)'
+                    : 'none',
+                  cursor: isLimitExhausted ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 22, color: '#fff',
+                  boxShadow: isLimitExhausted
+                    ? 'none'
+                    : '0 4px 20px rgba(79,142,247,0.45)',
+                  opacity: isLimitExhausted ? 0.4 : 1,
+                  transition: 'all 0.25s ease',
+                }}
                 onMouseEnter={e => {
+                  if (isLimitExhausted) return
                   e.currentTarget.style.transform = 'scale(1.08)'
                   e.currentTarget.style.boxShadow = '0 6px 28px rgba(79,142,247,0.6)'
                 }}
                 onMouseLeave={e => {
+                  if (isLimitExhausted) return
                   e.currentTarget.style.transform = 'scale(1)'
                   e.currentTarget.style.boxShadow = '0 4px 20px rgba(79,142,247,0.45)'
-                }}>
+                }}
+              >
                 →
               </button>
-            </div>
-
-            {/* Quick Suggestions */}
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
-              {['🏖️ Goa', '🏔️ Manali', '🕌 Rajasthan', '🌴 Kerala', '❄️ Kashmir'].map(place => (
-                <span key={place} onClick={() => {
-                  const dest = place.split(' ')[1]
-                  setSearchVal(dest)
-                  navigate('/plan', { state: { destination: dest } })
-                }} style={{
-                  padding: '6px 14px', borderRadius: 100,
-                  fontSize: 13, fontFamily: "'Inter', sans-serif", fontWeight: 500,
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.65)',
-                  cursor: 'pointer', transition: 'all 0.2s ease',
-                }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
-                    e.currentTarget.style.color = '#ffffff'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
-                  }}>
-                  {place}
-                </span>
-              ))}
             </div>
           </div>
         </div>
       </div>
 
-
+      {/* Limit Modal */}
+      <AnimatePresence>
+        {showLimitModal && (
+          <LimitModal onClose={() => setShowLimitModal(false)} />
+        )}
+      </AnimatePresence>
 
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        input::placeholder {
+          color: rgba(255, 255, 255, 0.3);
         }
       `}</style>
     </div>
