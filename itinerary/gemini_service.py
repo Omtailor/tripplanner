@@ -21,9 +21,7 @@ OPENROUTER_MODEL = config(
 )
 OPENROUTER_REFERRER = config("OPENROUTER_REFERRER", default="http://localhost:8000")
 OPENROUTER_APP_NAME = config("OPENROUTER_APP_NAME", default="TripPlanner")
-OPENROUTER_TIMEOUT_SECONDS = config(
-    "OPENROUTER_TIMEOUT_SECONDS", default=60, cast=int
-)
+OPENROUTER_TIMEOUT_SECONDS = config("OPENROUTER_TIMEOUT_SECONDS", default=60, cast=int)
 
 
 # ── BUG 3 FIX — Intercity cost estimator ────────────────────
@@ -208,25 +206,20 @@ def get_activity_limit(days: int) -> int:
 
 # ── Main prompt builder ──────────────────────────────────────
 def build_prompt(trip: dict) -> str:
-    days        = trip["days"]
+    days = trip["days"]
     destination = trip["destination"]
-    origin      = trip["origin"]
-    budget      = trip["budget"]
-    group       = trip["group_type"]
-    meal_pref   = trip["meal_pref"]
-    travelers   = trip.get("travelers", 1)
-    start_date  = trip["start_date"]  # datetime.date or "YYYY-MM-DD" string
+    origin = trip["origin"]
+    budget = trip["budget"]
+    group = trip["group_type"]
+    meal_pref = trip["meal_pref"]
+    travelers = trip.get("travelers", 1)
+    start_date = trip["start_date"]  # datetime.date or "YYYY-MM-DD" string
 
     # BUG 1 FIX — generate all dates server-side
     if isinstance(start_date, str):
         start_date = date.fromisoformat(start_date)
-    date_list = [
-        (start_date + timedelta(days=i)).isoformat()
-        for i in range(days)
-    ]
-    date_block = "\n".join(
-        f"  Day {i+1} → {d}" for i, d in enumerate(date_list)
-    )
+    date_list = [(start_date + timedelta(days=i)).isoformat() for i in range(days)]
+    date_block = "\n".join(f"  Day {i+1} → {d}" for i, d in enumerate(date_list))
     final_day = days  # alias for readability
 
     # BUG 3 FIX — compute intercity cost server-side
@@ -238,7 +231,8 @@ def build_prompt(trip: dict) -> str:
         "STAYCATION MODE: Origin and destination are the same city. "
         "There is NO intercity travel. intercity_travel_cost_inr MUST be 0. "
         "Do NOT generate any arrival or departure transport activity."
-        if is_staycation else ""
+        if is_staycation
+        else ""
     )
 
     activity_limit = get_activity_limit(days)
@@ -368,16 +362,15 @@ def build_regen_prompt(
     all_days: list,
 ) -> str:
     other_regions = [
-        d["region_of_day"] for d in all_days
-        if d["day_number"] != day_number
+        d["region_of_day"] for d in all_days if d["day_number"] != day_number
     ]
     old_activities = [a["name"] for a in old_day["activities"]]
-    days      = trip["days"]
+    days = trip["days"]
     travelers = trip.get("travelers", 1)
     meal_pref = trip["meal_pref"]
-    budget    = trip["budget"]
-    is_final  = day_number == days
-    schema    = DayPlan.model_json_schema()
+    budget = trip["budget"]
+    is_final = day_number == days
+    schema = DayPlan.model_json_schema()
 
     # Compute the correct date for this day
     start_date = trip["start_date"]
@@ -423,61 +416,50 @@ def _extract_json_object(text: str) -> str:
     text = text.strip()
     if text.startswith("```"):
         parts = [
-            line for line in text.splitlines()
-            if not line.strip().startswith("```")
+            line for line in text.splitlines() if not line.strip().startswith("```")
         ]
         text = "\n".join(parts).strip()
     start = text.find("{")
-    end   = text.rfind("}")
+    end = text.rfind("}")
     if start == -1 or end == -1 or end <= start:
-        raise ValueError(
-            f"Model did not return a JSON object. Raw: {text[:500]}"
-        )
+        raise ValueError(f"Model did not return a JSON object. Raw: {text[:500]}")
     return text[start : end + 1]
 
 
 # ── OpenRouter API call ──────────────────────────────────────
+# ── Google AI Studio API call ────────────────────────────────
 def _openrouter_chat_json(
     prompt: str,
     *,
     model: Optional[str] = None,
 ) -> dict[str, Any]:
-    if not OPENROUTER_API_KEY:
-        raise RuntimeError(
-            "Missing OpenRouter API key. Set OPENROUTER_API_KEY (preferred) "
-            "or GEMINI_API_KEY in your .env."
-        )
+    api_key = config("GEMINI_API_KEY", default=None)
+    if not api_key:
+        raise RuntimeError("Missing GEMINI_API_KEY in environment variables.")
 
-    url = f"{OPENROUTER_BASE_URL}/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": OPENROUTER_REFERRER,
-        "X-Title": OPENROUTER_APP_NAME,
-    }
-    payload: dict[str, Any] = {
-        "model": model or OPENROUTER_MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.2,
-        "response_format": {"type": "json_object"},
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.2,
+            "maxOutputTokens": 8192,
+            "responseMimeType": "application/json",
+        },
     }
 
     resp = requests.post(
-        url, headers=headers, json=payload,
+        url,
+        headers=headers,
+        json=payload,
         timeout=OPENROUTER_TIMEOUT_SECONDS,
     )
     if resp.status_code < 200 or resp.status_code >= 300:
         body = resp.text.strip().replace("\r", "")
-        raise RuntimeError(
-            f"{resp.status_code} {resp.reason}. {body[:1500]}"
-        )
+        raise RuntimeError(f"{resp.status_code} {resp.reason}. {body[:1500]}")
 
-    data    = resp.json()
-    content = (
-        data.get("choices", [{}])[0]
-        .get("message", {})
-        .get("content", "")
-    )
+    data = resp.json()
+    content = data["candidates"][0]["content"]["parts"][0]["text"]
     json_text = _extract_json_object(content)
     return json.loads(json_text)
 
@@ -489,8 +471,8 @@ def _validate_schedule(itinerary: ItineraryResponse) -> None:
             continue
         last = day.activities[-1]
         try:
-            h, m   = map(int, last.time.split(":"))
-            end_m  = h * 60 + m + last.duration_minutes
+            h, m = map(int, last.time.split(":"))
+            end_m = h * 60 + m + last.duration_minutes
             end_hh = end_m // 60
             end_mm = end_m % 60
             if end_hh > 22 or (end_hh == 22 and end_mm > 0):
@@ -512,8 +494,8 @@ def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
 
     for attempt in range(max_retries + 1):
         try:
-            raw        = _openrouter_chat_json(build_prompt(trip))
-            itinerary  = ItineraryResponse(**raw)
+            raw = _openrouter_chat_json(build_prompt(trip))
+            itinerary = ItineraryResponse(**raw)
 
             # BUG 1 FIX — overwrite dates server-side regardless of what
             # Gemini returned
@@ -527,13 +509,11 @@ def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
             )
 
             # BUG 3 FIX — always overwrite intercity cost with our estimate
-            itinerary.summary.intercity_travel_cost_inr = (
-                estimate_intercity_cost(
-                    trip["origin"],
-                    trip["destination"],
-                    trip["budget"],
-                    trip.get("travelers", 1),
-                )
+            itinerary.summary.intercity_travel_cost_inr = estimate_intercity_cost(
+                trip["origin"],
+                trip["destination"],
+                trip["budget"],
+                trip.get("travelers", 1),
             )
 
             # BUG 10 FIX — log schedule overflow warnings
