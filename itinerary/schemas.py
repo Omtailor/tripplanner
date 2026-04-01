@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import List, Literal, Optional
 
 # ── Type aliases ────────────────────────────────────────────
-VibeType   = Literal["relax", "adventure", "culture"]
+VibeType = Literal["relax", "adventure", "culture"]
 BudgetTier = Literal["low", "mid", "high"]
-GroupType  = Literal["solo", "couple", "friends", "family"]
-MealPref   = Literal["veg", "non-veg"]
+GroupType = Literal["solo", "couple", "friends", "family"]
+MealPref = Literal["veg", "non-veg"]
 
 
 # ── Single activity inside a day ────────────────────────────

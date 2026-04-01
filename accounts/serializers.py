@@ -3,19 +3,20 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = User
-        fields = ['name', 'email', 'password']
+        fields = ["name", "email", "password"]
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['email'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            name=validated_data['name']
+            username=validated_data["email"],
+            email=validated_data["email"],
+            password=validated_data["password"],
+            name=validated_data["name"],
         )
         return user
 
@@ -23,4 +24,4 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'email']
+        fields = ["id", "name", "email"]

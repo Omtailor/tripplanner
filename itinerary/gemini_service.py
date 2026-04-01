@@ -437,7 +437,8 @@ def _openrouter_chat_json(
     if not api_key:
         raise RuntimeError("Missing GEMINI_API_KEY in environment variables.")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+    # NEW
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],

@@ -7,7 +7,7 @@ class Trip(models.Model):
 
     BUDGET_CHOICES = [
         ("low", "Low"),
-        ("mid", "Mid"),       # FIX — was "medium", gemini_service uses "mid"
+        ("mid", "Mid"),  # FIX — was "medium", gemini_service uses "mid"
         ("high", "High"),
     ]
     VIBE_CHOICES = [
@@ -37,18 +37,18 @@ class Trip(models.Model):
         on_delete=models.CASCADE,
         related_name="trips",
     )
-    origin          = models.CharField(max_length=100)
-    destination     = models.CharField(max_length=100)
-    start_date      = models.DateField()
-    end_date        = models.DateField()
-    days            = models.PositiveIntegerField()
-    travelers       = models.PositiveIntegerField(default=1)  # FIX — added
-    group_type      = models.CharField(max_length=10, choices=GROUP_CHOICES)
-    meal_pref       = models.CharField(max_length=10, choices=MEAL_CHOICES)
-    vibe            = models.CharField(max_length=15, choices=VIBE_CHOICES)
-    budget_tier     = models.CharField(max_length=10, choices=BUDGET_CHOICES)
-    detail_level    = models.CharField(max_length=10, choices=DETAIL_CHOICES)
-    created_at      = models.DateTimeField(auto_now_add=True)
+    origin = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    days = models.PositiveIntegerField()
+    travelers = models.PositiveIntegerField(default=1)  # FIX — added
+    group_type = models.CharField(max_length=10, choices=GROUP_CHOICES)
+    meal_pref = models.CharField(max_length=10, choices=MEAL_CHOICES)
+    vibe = models.CharField(max_length=15, choices=VIBE_CHOICES)
+    budget_tier = models.CharField(max_length=10, choices=BUDGET_CHOICES)
+    detail_level = models.CharField(max_length=10, choices=DETAIL_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.email} → {self.destination} ({self.days} days)"
@@ -65,10 +65,10 @@ class Itinerary(models.Model):
         on_delete=models.CASCADE,
         related_name="itinerary",
     )
-    days_data   = models.JSONField()
-    version     = models.PositiveIntegerField(default=1)
-    is_active   = models.BooleanField(default=True)
-    created_at  = models.DateTimeField(auto_now_add=True)
+    days_data = models.JSONField()
+    version = models.PositiveIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Itinerary v{self.version} for {self.trip.destination}"
@@ -80,15 +80,15 @@ class Itinerary(models.Model):
 # ── Day Regeneration Log ─────────────────────────────────────
 class DayRegeneration(models.Model):
 
-    itinerary   = models.ForeignKey(
+    itinerary = models.ForeignKey(
         Itinerary,
         on_delete=models.CASCADE,
         related_name="day_regenerations",
     )
-    day_number  = models.PositiveIntegerField()
-    old_json    = models.JSONField()
-    new_json    = models.JSONField()
-    created_at  = models.DateTimeField(auto_now_add=True)
+    day_number = models.PositiveIntegerField()
+    old_json = models.JSONField()
+    new_json = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Regen Day {self.day_number} of Itinerary #{self.itinerary.id}"

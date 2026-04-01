@@ -16,12 +16,15 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
-            return Response({
-                'message': 'Account created successfully',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': UserProfileSerializer(user).data
-            }, status=201)
+            return Response(
+                {
+                    "message": "Account created successfully",
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                    "user": UserProfileSerializer(user).data,
+                },
+                status=201,
+            )
         return Response(serializer.errors, status=400)
 
 
