@@ -444,7 +444,7 @@ def _openrouter_chat_json(
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.2,
-            "maxOutputTokens": 8192,
+            "maxOutputTokens": 65536,
             "responseMimeType": "application/json",
         },
     }
