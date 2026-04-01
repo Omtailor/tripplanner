@@ -17,7 +17,6 @@ CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS", default="http://localhost:8000", cast=Csv()
 )
 
-
 # ── Applications ──────────────────────────────────────────────
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -83,7 +82,6 @@ DATABASES = {
     }
 }
 
-
 # ── Password Validation ───────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -109,7 +107,6 @@ STORAGES = {
     },
 }
 
-
 # ── Cache ─────────────────────────────────────────────────────
 REDIS_URL = config("REDIS_URL", default=None)
 
@@ -121,7 +118,7 @@ if REDIS_URL:
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "CONNECTION_POOL_KWARGS": {
-                    "ssl_cert_reqs": None  # ← required for Upstash rediss://
+                    "ssl_cert_reqs": None
                 },
             },
         }
@@ -165,14 +162,9 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-# ── OpenRouter ────────────────────────────────────────────────
-OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = config("OPENROUTER_MODEL", default="google/gemini-2.0-flash-001")
-OPENROUTER_BASE_URL = config(
-    "OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v1"
-)
-OPENROUTER_REFERRER = config("OPENROUTER_REFERRER", default="http://localhost:8000")
-OPENROUTER_APP_NAME = config("OPENROUTER_APP_NAME", default="TripPlanner")
-OPENROUTER_TIMEOUT_SECONDS = config("OPENROUTER_TIMEOUT_SECONDS", default=90, cast=int)
+# ── Gemini ────────────────────────────────────────────────────
+GEMINI_API_KEY = config("GEMINI_API_KEY")
+GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-2.5-flash")
+GEMINI_TIMEOUT_SECONDS = config("GEMINI_TIMEOUT_SECONDS", default=90, cast=int)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
