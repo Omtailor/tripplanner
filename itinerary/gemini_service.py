@@ -8,20 +8,8 @@ from decouple import config
 
 from .schemas import ItineraryResponse, DayPlan
 
-OPENROUTER_BASE_URL = config(
-    "OPENROUTER_BASE_URL",
-    default="https://openrouter.ai/api/v1",
-).rstrip("/")
-OPENROUTER_API_KEY = config("OPENROUTER_API_KEY", default=None) or config(
-    "GEMINI_API_KEY", default=None
-)
-OPENROUTER_MODEL = config(
-    "OPENROUTER_MODEL",
-    default="google/gemini-2.0-flash-001",
-)
-OPENROUTER_REFERRER = config("OPENROUTER_REFERRER", default="http://localhost:8000")
-OPENROUTER_APP_NAME = config("OPENROUTER_APP_NAME", default="TripPlanner")
-OPENROUTER_TIMEOUT_SECONDS = config("OPENROUTER_TIMEOUT_SECONDS", default=60, cast=int)
+GEMINI_API_KEY = config("GEMINI_API_KEY", default=None)
+GEMINI_TIMEOUT_SECONDS = config("GEMINI_TIMEOUT_SECONDS", default=60, cast=int)
 
 
 # ── BUG 3 FIX — Intercity cost estimator ────────────────────
@@ -427,42 +415,68 @@ def _extract_json_object(text: str) -> str:
 
 
 # ── OpenRouter API call ──────────────────────────────────────
-# ── Google AI Studio API call ────────────────────────────────
+# ── Primary + Fallback model constants ───────────────────────
+PRIMARY_MODEL_ID = "gemini-2.5-flash"
+FALLBACK_MODEL_ID = "gemini-2.5-flash-lite"
+
+# ── Google AI Studio API call ─────────────────────────────────
 def _openrouter_chat_json(
     prompt: str,
     *,
     model: Optional[str] = None,
 ) -> dict[str, Any]:
-    api_key = config("GEMINI_API_KEY", default=None)
-    if not api_key:
+    if not GEMINI_API_KEY:
         raise RuntimeError("Missing GEMINI_API_KEY in environment variables.")
+    api_key = GEMINI_API_KEY
 
-    # NEW
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-    headers = {"Content-Type": "application/json"}
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "temperature": 0.2,
-            "maxOutputTokens": 65536,
-            "responseMimeType": "application/json",
-        },
-    }
+    models_to_try = [PRIMARY_MODEL_ID, FALLBACK_MODEL_ID]
+    last_error = None
 
-    resp = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=OPENROUTER_TIMEOUT_SECONDS,
+    for model_id in models_to_try:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model_id}:generateContent?key={api_key}"
+        )
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.2,
+                "maxOutputTokens": 65536,
+                "responseMimeType": "application/json",
+            },
+        }
+
+        try:
+            resp = requests.post(
+                url,
+                headers=headers,
+                json=payload,
+                timeout=GEMINI_TIMEOUT_SECONDS,
+            )
+            if resp.status_code < 200 or resp.status_code >= 300:
+                body = resp.text.strip().replace("\r", "")
+                raise RuntimeError(
+                    f"{resp.status_code} {resp.reason}. {body[:1500]}"
+                )
+
+            data = resp.json()
+            content = data["candidates"][0]["content"]["parts"][0]["text"]
+            json_text = _extract_json_object(content)
+            result = json.loads(json_text)
+            if model_id == FALLBACK_MODEL_ID:
+                print(f"[FALLBACK] Used {FALLBACK_MODEL_ID} successfully.")
+            return result
+
+        except Exception as e:
+            last_error = e
+            print(f"[WARNING] Model '{model_id}' failed: {e}. "
+                  + ("Trying fallback..." if model_id == PRIMARY_MODEL_ID else "No more models."))
+            continue
+
+    raise RuntimeError(
+        f"All models failed. Last error: {last_error}"
     )
-    if resp.status_code < 200 or resp.status_code >= 300:
-        body = resp.text.strip().replace("\r", "")
-        raise RuntimeError(f"{resp.status_code} {resp.reason}. {body[:1500]}")
-
-    data = resp.json()
-    content = data["candidates"][0]["content"]["parts"][0]["text"]
-    json_text = _extract_json_object(content)
-    return json.loads(json_text)
 
 
 # ── BUG 10 FIX — schedule overflow validator ─────────────────
