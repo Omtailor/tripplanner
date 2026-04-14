@@ -2,10 +2,9 @@ import json
 import re
 from datetime import date, timedelta
 from typing import Any, Optional
-
 import requests
-from decouple import config
 
+from decouple import config
 from .schemas import ItineraryResponse, DayPlan
 
 GEMINI_API_KEY = config("GEMINI_API_KEY", default=None)
@@ -414,17 +413,13 @@ def _extract_json_object(text: str) -> str:
     return text[start : end + 1]
 
 
-# ── OpenRouter API call ──────────────────────────────────────
 # ── Primary + Fallback model constants ───────────────────────
-PRIMARY_MODEL_ID = "gemini-2.5-flash"
-FALLBACK_MODEL_ID = "gemini-2.5-flash-lite"
+PRIMARY_MODEL_ID = "gemini-2.5-flash-lite"
+FALLBACK_MODEL_ID = "gemini-2.5-flash"
+
 
 # ── Google AI Studio API call ─────────────────────────────────
-def _openrouter_chat_json(
-    prompt: str,
-    *,
-    model: Optional[str] = None,
-) -> dict[str, Any]:
+def _gemini_chat_json(prompt: str) -> dict[str, Any]:
     if not GEMINI_API_KEY:
         raise RuntimeError("Missing GEMINI_API_KEY in environment variables.")
     api_key = GEMINI_API_KEY
@@ -456,9 +451,7 @@ def _openrouter_chat_json(
             )
             if resp.status_code < 200 or resp.status_code >= 300:
                 body = resp.text.strip().replace("\r", "")
-                raise RuntimeError(
-                    f"{resp.status_code} {resp.reason}. {body[:1500]}"
-                )
+                raise RuntimeError(f"{resp.status_code} {resp.reason}. {body[:1500]}")
 
             data = resp.json()
             content = data["candidates"][0]["content"]["parts"][0]["text"]
@@ -470,13 +463,17 @@ def _openrouter_chat_json(
 
         except Exception as e:
             last_error = e
-            print(f"[WARNING] Model '{model_id}' failed: {e}. "
-                  + ("Trying fallback..." if model_id == PRIMARY_MODEL_ID else "No more models."))
+            print(
+                f"[WARNING] Model '{model_id}' failed: {e}. "
+                + (
+                    "Trying fallback..."
+                    if model_id == PRIMARY_MODEL_ID
+                    else "No more models."
+                )
+            )
             continue
 
-    raise RuntimeError(
-        f"All models failed. Last error: {last_error}"
-    )
+    raise RuntimeError(f"All models failed. Last error: {last_error}")
 
 
 # ── BUG 10 FIX — schedule overflow validator ─────────────────
@@ -509,7 +506,7 @@ def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
 
     for attempt in range(max_retries + 1):
         try:
-            raw = _openrouter_chat_json(build_prompt(trip))
+            raw = _gemini_chat_json(build_prompt(trip))
             itinerary = ItineraryResponse(**raw)
 
             # BUG 1 FIX — overwrite dates server-side regardless of what
@@ -563,7 +560,7 @@ def regenerate_day(
     last_error = None
     for attempt in range(max_retries + 1):
         try:
-            raw = _openrouter_chat_json(
+            raw = _gemini_chat_json(
                 build_regen_prompt(trip, day_number, old_day, all_days)
             )
             day = DayPlan(**raw)

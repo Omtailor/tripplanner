@@ -287,7 +287,7 @@ export default function HistoryPage() {
               fontFamily: "'Inter', sans-serif",
               fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 32,
             }}>Start by planning your first adventure.</p>
-            <button onClick={() => navigate('/plan')} style={{
+            <button onClick={() => navigate('/')} style={{
               padding: '14px 32px',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7)',
               border: 'none', borderRadius: 100,
