@@ -12,7 +12,7 @@ class TripSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "days",
-            "travelers",        # FIX — added
+            "travelers",  # FIX — added
             "group_type",
             "meal_pref",
             "vibe",
@@ -23,10 +23,10 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class ItinerarySerializer(serializers.ModelSerializer):
-    trip        = TripSerializer(read_only=True)
-    days        = serializers.SerializerMethodField()
-    summary     = serializers.SerializerMethodField()
-    created_at  = serializers.DateTimeField(read_only=True)
+    trip = TripSerializer(read_only=True)
+    days = serializers.SerializerMethodField()
+    summary = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Itinerary
@@ -46,7 +46,11 @@ class DayRegenerationSerializer(serializers.ModelSerializer):
     class Meta:
         model = DayRegeneration
         fields = [
-            "id", "itinerary", "day_number",
-            "old_json", "new_json", "created_at",
+            "id",
+            "itinerary",
+            "day_number",
+            "old_json",
+            "new_json",
+            "created_at",
         ]
         read_only_fields = ["id", "created_at"]

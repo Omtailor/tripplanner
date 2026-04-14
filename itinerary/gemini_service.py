@@ -511,8 +511,8 @@ def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
 
             # BUG 1 FIX — overwrite dates server-side regardless of what
             # Gemini returned
-            for i, day in enumerate(itinerary.days):
-                correct = (start_date + timedelta(days=i)).isoformat()
+            for day in itinerary.days:
+                correct = (start_date + timedelta(days=day.day_number - 1)).isoformat()
                 day.date = correct
 
             # BUG 2 FIX — always recompute grand total from day totals
@@ -550,12 +550,17 @@ def regenerate_day(
     day_number: int,
     old_day: dict,
     all_days: list,
+    blocked_regions: list = None,
     max_retries: int = 0,
 ) -> DayPlan:
     start_date = trip["start_date"]
     if isinstance(start_date, str):
         start_date = date.fromisoformat(start_date)
     correct_date = (start_date + timedelta(days=day_number - 1)).isoformat()
+
+    blocked = {old_day["region_of_day"].strip().lower()}
+    if blocked_regions:
+        blocked.update(r.strip().lower() for r in blocked_regions)
 
     last_error = None
     for attempt in range(max_retries + 1):
@@ -564,9 +569,12 @@ def regenerate_day(
                 build_regen_prompt(trip, day_number, old_day, all_days)
             )
             day = DayPlan(**raw)
-
-            # BUG 1 FIX — enforce correct date after regen too
             day.date = correct_date
+
+            if day.region_of_day.strip().lower() in blocked:
+                raise ValueError(
+                    f"Region '{day.region_of_day}' overlaps with blocked regions, retrying..."
+                )
 
             return day
 

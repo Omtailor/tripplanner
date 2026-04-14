@@ -36,25 +36,6 @@ def validate_vibe_distribution(days: list) -> None:
     print(f"✅ Vibe check done. Counts: {dict(counts)}")
 
 
-def validate_regen_region(
-    new_day: DayPlan,
-    old_region: str,
-    adjacent_regions: list,
-) -> None:
-    new_region = new_day.region_of_day
-    if new_region == old_region:
-        raise ValueError(
-            f"Regenerated day still uses region '{new_region}'. "
-            f"Must use a different region."
-        )
-    if new_region in adjacent_regions:
-        print(
-            f"[WARNING] Regen region '{new_region}' matches "
-            f"adjacent day: {adjacent_regions}"
-        )
-    print(f"✅ Regen region '{new_region}' accepted.")
-
-
 def run_all_validators(days: list, vibe_mode: str) -> None:
     validate_geographic_clustering(days)
     if vibe_mode == "mixed":

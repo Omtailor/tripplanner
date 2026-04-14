@@ -35,10 +35,11 @@ export default function ItineraryPage() {
             const res = await api.post(`/itinerary/${id}/regen-day/`, { day_number: dayNumber })
             setItinerary(prev => ({
                 ...prev,
-                days: prev.days.map(d => d.day_number === dayNumber ? res.data.day : d)
+                days: prev.days.map(d => d.day_number === dayNumber ? res.data.day : d),
+                summary: res.data.summary ?? prev.summary
             }))
             setShowSuccessBanner(dayNumber)
-            setTimeout(() => setShowSuccessBanner(false), 2800)
+            setTimeout(() => setShowSuccessBanner(false), 4000)
         } catch {
             toast.error('Failed to regenerate day')
         } finally {
@@ -593,14 +594,14 @@ export default function ItineraryPage() {
             <AnimatePresence>
                 {showSuccessBanner && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                        initial={{ opacity: 0, scale: 0.9, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 30 }}
+                        exit={{ opacity: 0, scale: 0.9, y: -20 }}
                         transition={{ duration: 0.25, ease: 'easeOut' }}
                         style={{
                             position: 'fixed',
-                            top: '50%', left: '50%',
-                            transform: 'translate(-50%, -50%)',
+                            top: 'clamp(72px, 12vw, 90px)', left: '50%',
+                            transform: 'translateX(-50%)',
                             zIndex: 9999,
                             background: 'rgba(8, 8, 20, 0.92)',
                             backdropFilter: 'blur(24px)',

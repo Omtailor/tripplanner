@@ -64,9 +64,9 @@ class DayPlan(BaseModel):
     breakfast: str
     lunch: str
     dinner: str
-    accommodation: str
+    accommodation: Optional[str] = None
     accommodation_cost_inr: int
-    local_transport_note: str
+    local_transport_note: Optional[str] = None
     local_transport_cost_inr: int
     day_total_cost_inr: int
 
