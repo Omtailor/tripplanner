@@ -10,8 +10,6 @@ import { PDFDownloadLink } from '@react-pdf/renderer'
 import ItineraryPDF from '../components/itinerary/ItineraryPDF'
 
 
-
-
 export default function ItineraryPage() {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -63,17 +61,11 @@ export default function ItineraryPage() {
         </div>
     )
 
-
-
     if (!itinerary) return null
-
-
 
     const days = itinerary.days || []
     const summary = itinerary.summary || {}
     const trip = itinerary.trip
-
-
 
     const chartData = [
         { name: 'Intercity', value: summary.intercity_travel_cost_inr || 0 },
@@ -83,7 +75,6 @@ export default function ItineraryPage() {
         { name: 'Activities', value: summary.activities_total_inr || 0 },
     ]
     const COLORS = ['#4f8ef7', '#a855f7', '#2dd4bf', '#f472b6', '#fb923c']
-
 
 
     return (

@@ -211,7 +211,7 @@ export default function HistoryPage() {
           <motion.button
             whileHover={{ backgroundPosition: '100% 0' }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => navigate('/plan')}
+            onClick={() => navigate('/')}
             style={{
               padding: 'clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 20px)',
               background: 'linear-gradient(90deg, #7b61ff, #4f8ef7, #7b61ff)',
