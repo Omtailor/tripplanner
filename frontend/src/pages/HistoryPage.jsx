@@ -6,6 +6,9 @@ import toast from 'react-hot-toast'
 import { ClipLoader } from 'react-spinners'
 import { ArrowLeft, Calendar, ChevronRight, Trash2, AlertTriangle, Plane } from 'lucide-react'
 
+const toTitleCase = (str) =>
+  str ? str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : ''
+
 // ── Confirm Dialog Component ─────────────────────────────────
 function ConfirmDialog({ destination, onConfirm, onCancel }) {
   return (
@@ -155,7 +158,7 @@ export default function HistoryPage() {
       <AnimatePresence>
         {confirmId && (
           <ConfirmDialog
-            destination={trips.find(t => t.id === confirmId)?.trip?.destination}
+            destination={toTitleCase(trips.find(t => t.id === confirmId)?.trip?.destination)}
             onConfirm={() => handleDelete(confirmId)}
             onCancel={() => setConfirmId(null)}
           />
@@ -350,9 +353,9 @@ export default function HistoryPage() {
                         wordBreak: 'break-word',  // ← prevents overflow
                       }}>
 
-                        {trip?.origin}
+                        {toTitleCase(trip?.origin)}
                         <Plane size={18} color="#7b61ff" style={{ opacity: 0.8 }} />
-                        {trip?.destination}
+                        {toTitleCase(trip?.destination)}
                       </h2>
                       <div style={{
                         fontFamily: "'Inter', sans-serif",
@@ -371,7 +374,7 @@ export default function HistoryPage() {
 
                       {[
                         { icon: '🗓', label: `${trip?.start_date} — ${trip?.end_date}` },
-                        { icon: '📍', label: trip?.destination },
+                        { icon: '📍', label: toTitleCase(trip?.destination) },
                         { icon: '👥', label: trip?.group_type },
                         { icon: '💰', label: trip?.budget_tier },
                       ].map(tag => (

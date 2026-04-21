@@ -9,6 +9,12 @@ import { ClipLoader } from 'react-spinners'
 import { ArrowLeft, ArrowRight, Calendar, DollarSign, Sparkles, MapPin, Utensils, Users, Check, Plane } from 'lucide-react'
 
 
+const toTitleCase = (str) =>
+  str
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+
 
 const CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat',
@@ -158,7 +164,9 @@ export default function PlannerPage() {
   const [generating, setGenerating] = useState(false)
   const [citySearch, setCitySearch] = useState('')
 
-  const destinationFromDash = location.state?.destination || ''
+  const destinationFromDash = location.state?.destination
+    ? toTitleCase(location.state.destination)
+    : ''
 
   const [data, setData] = useState({
     destination: destinationFromDash,
@@ -193,7 +201,7 @@ export default function PlannerPage() {
       const travelersMap = { solo: 1, couple: 2, friends: 4, family: 4 }
       const payload = {
         origin: data.origin,
-        destination: data.destination || 'Goa',
+        destination: toTitleCase(data.destination || 'Goa'),
         start_date: data.start_date.toISOString().split('T')[0],
         end_date: data.end_date.toISOString().split('T')[0],
         days,
@@ -328,7 +336,7 @@ export default function PlannerPage() {
           // padding removed from here — lives in children now
           boxShadow: '0 18px 45px rgba(0,0,0,0.55)',
           maxHeight: 'calc(100vh - 180px)',   // ← NEW: cap to viewport height
-          overflow: 'hidden',                 // ← NEW: clip, children scroll
+          overflow: 'visible',                 // allow datepicker popper to escape card bounds
           // minHeight: 420 removed
           display: 'flex', flexDirection: 'column',
           boxSizing: 'border-box',
@@ -375,6 +383,8 @@ export default function PlannerPage() {
                             placeholderText="Select start date"
                             className="glass-input"
                             wrapperClassName="date-picker-wrapper"
+                            popperPlacement="bottom-start"
+                            popperProps={{ strategy: 'fixed' }}
                           />
                         </div>
                         <div>
@@ -387,6 +397,8 @@ export default function PlannerPage() {
                             disabled={!data.start_date}
                             className="glass-input"
                             wrapperClassName="date-picker-wrapper"
+                            popperPlacement="bottom-start"
+                            popperProps={{ strategy: 'fixed' }}
                           />
                         </div>
                       </div>
@@ -685,6 +697,32 @@ export default function PlannerPage() {
           }
           .react-datepicker-wrapper {
             width: 100%;
+          }
+          .react-datepicker-popper {
+            z-index: 9999 !important;
+          }
+          .react-datepicker {
+            background: #1a1f35 !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            font-family: 'Inter', sans-serif !important;
+          }
+          .react-datepicker__header {
+            background: rgba(255,255,255,0.05) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+          }
+          .react-datepicker__current-month,
+          .react-datepicker__day-name,
+          .react-datepicker__day {
+            color: #fff !important;
+          }
+          .react-datepicker__day:hover {
+            background: rgba(123,97,255,0.3) !important;
+          }
+          .react-datepicker__day--selected {
+            background: #7b61ff !important;
+          }
+          .react-datepicker__day--disabled {
+            color: rgba(255,255,255,0.2) !important;
           }
         `}</style>
       </motion.div>
