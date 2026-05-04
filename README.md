@@ -282,7 +282,7 @@ Every Gemini response is parsed and validated against a strict **Pydantic v2 sch
 
 **Om Tailor** — AIML Student, Mumbai
 
-[
+
 
 ***
 
