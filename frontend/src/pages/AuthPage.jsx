@@ -17,6 +17,7 @@ export default function AuthPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
   const { login, register } = useAuth()
   const navigate = useNavigate()
 
@@ -30,6 +31,12 @@ export default function AuthPage() {
     }, 4000)
     return () => clearInterval(timer)
   }, [])
+
+  useEffect(() => {
+    if (!showPassword) return
+    const timer = setTimeout(() => setShowPassword(false), 3000)
+    return () => clearTimeout(timer)
+  }, [showPassword])
 
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -172,16 +179,34 @@ export default function AuthPage() {
 
             <div>
               <label style={labelStyle}>Password</label>
-              <input
-                className="glass-input"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={handle}
-                required
-                style={inputStyle}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="glass-input"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={form.password}
+                  onChange={handle}
+                  required
+                  style={{ ...inputStyle, paddingRight: 50 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(prev => !prev)}
+                  style={{
+                    position: 'absolute', right: 14, top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none', border: 'none',
+                    cursor: 'pointer', padding: 4,
+                    color: 'rgba(255,255,255,0.5)',
+                    fontSize: 18, lineHeight: 1,
+                    transition: 'color 0.2s',
+                  }}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             <button type="submit" disabled={loading} style={{
