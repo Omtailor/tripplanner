@@ -317,6 +317,12 @@ CONTENT RULES
 3. transport_notes must always be a non-empty string.
    If no vehicle is required, write 'Walking within the area.'
 
+4. MEAL FIELDS — ABSOLUTE REQUIREMENT:
+    Every single day MUST have all three fields: breakfast, lunch, dinner.
+    These are REQUIRED. Never omit any of them under any circumstance.
+    Even on travel/departure days, provide a meal suggestion.
+    Format: "Restaurant Name — dish recommendation (approx ₹XX per person)"
+
 {staycation_rule}
 
 ═══════════════════════════════════════════════
@@ -498,7 +504,7 @@ def _validate_schedule(itinerary: ItineraryResponse) -> None:
 
 
 # ── Core generation function ──────────────────────────────────
-def generate_itinerary(trip: dict, max_retries: int = 0) -> ItineraryResponse:
+def generate_itinerary(trip: dict, max_retries: int = 2) -> ItineraryResponse:
     last_error = None
     start_date = trip["start_date"]
     if isinstance(start_date, str):
@@ -551,7 +557,7 @@ def regenerate_day(
     old_day: dict,
     all_days: list,
     blocked_regions: list = None,
-    max_retries: int = 0,
+    max_retries: int = 2,
 ) -> DayPlan:
     start_date = trip["start_date"]
     if isinstance(start_date, str):

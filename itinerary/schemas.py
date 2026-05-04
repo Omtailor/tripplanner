@@ -86,6 +86,13 @@ class DayPlan(BaseModel):
             return "N/A"
         return str(v)
 
+    @field_validator("breakfast", "lunch", "dinner", mode="before")
+    @classmethod
+    def require_meal(cls, v) -> str:
+        if not v or str(v).strip() == "":
+            raise ValueError("Meal field is required and cannot be empty.")
+        return str(v)
+
 
 # ── Trip summary at the end ──────────────────────────────────
 class TripSummary(BaseModel):
