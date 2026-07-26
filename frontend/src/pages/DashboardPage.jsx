@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
-import { LogOut, History, Zap } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 import d1 from '../assets/dashboard/d1.jpg'
 import d2 from '../assets/dashboard/d2.jpg'
@@ -12,182 +11,22 @@ import d3 from '../assets/dashboard/d3.jpg'
 import d4 from '../assets/dashboard/d4.jpg'
 import d5 from '../assets/dashboard/d5.jpg'
 
+import CrossfadeBackground from '../components/shared/CrossfadeBackground'
+import TopBar from '../components/dashboard/TopBar'
+import SearchCard from '../components/dashboard/SearchCard'
+import LimitModal from '../components/shared/LimitModal'
+
 const IMAGES = [d1, d2, d3, d4, d5]
 
-const TYPEWRITER_DESTINATIONS = [
-  'Goa with friends...',
-  'Manali in winter...',
-  'Rajasthan on a budget...',
-  'Kerala backwaters...',
-  'Ladakh on a bike...',
-]
-
-// ── Limit Modal ───────────────────────────────────────────────
-function LimitModal({ onClose }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 9999,
-        background: 'rgba(0,0,0,0.65)',
-        backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '16px',
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.88, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.88, y: 24 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-        onClick={e => e.stopPropagation()}
-        style={{
-          background: 'rgba(8,8,20,0.97)',
-          border: '1px solid rgba(255,255,255,0.13)',
-          borderRadius: 20,
-          padding: 'clamp(24px, 5vw, 36px)',
-          maxWidth: 380, width: '100%',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.7)',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ fontSize: 40, marginBottom: 12 }}>🚫</div>
-        <h2 style={{
-          fontFamily: "'Poppins', sans-serif",
-          fontSize: 'clamp(17px, 4vw, 20px)',
-          fontWeight: 700, color: '#fff',
-          marginBottom: 8, marginTop: 0,
-        }}>
-          Daily Limit Reached
-        </h2>
-        <p style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 'clamp(13px, 3vw, 14px)',
-          color: 'rgba(255,255,255,0.55)',
-          lineHeight: 1.7, marginBottom: 24,
-        }}>
-          You've used all{' '}
-          <span style={{ color: '#7eb3ff', fontWeight: 600 }}>5 itinerary generations</span>{' '}
-          for today.<br />
-          Your limit resets at{' '}
-          <span style={{ color: '#2dd4bf', fontWeight: 600 }}>12:00 AM midnight</span>.
-        </p>
-        <button
-          onClick={onClose}
-          style={{
-            padding: '10px 28px', borderRadius: 100,
-            background: 'linear-gradient(135deg, #4f8ef7, #a855f7)',
-            border: 'none', color: '#fff',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
-          }}
-        >
-          Got it
-        </button>
-      </motion.div>
-    </motion.div>
-  )
-}
-
-// ── Tooltip Component ─────────────────────────────────────────
-function LimitTooltip({ children, remaining }) {
-  const [show, setShow] = useState(false)
-
-  return (
-    <div
-      style={{ position: 'relative', display: 'inline-flex', alignItems: 'stretch' }}
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-      onClick={() => setShow(prev => !prev)}
-    >
-      {children}
-
-      <AnimatePresence>
-        {show && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            style={{
-              position: 'absolute',
-              top: 'calc(100% + 12px)',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              whiteSpace: 'nowrap',
-              background: 'rgba(8,8,20,0.97)',
-              border: '1px solid rgba(255,255,255,0.13)',
-              borderRadius: 12,
-              padding: '12px 18px',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.6)',
-              zIndex: 999,
-              pointerEvents: 'none',
-            }}
-          >
-            {/* Arrow pointing UP */}
-            <div style={{
-              position: 'absolute',
-              top: -5,
-              left: '50%',
-              width: 10, height: 10,
-              background: 'rgba(8,8,20,0.97)',
-              border: '1px solid rgba(255,255,255,0.13)',
-              borderBottom: 'none', borderRight: 'none',
-              transform: 'translateX(-50%) rotate(45deg)',
-            }} />
-
-            <div style={{
-              fontFamily: "'Inter', sans-serif", fontSize: 13,
-              fontWeight: 700, color: '#fff', marginBottom: 6,
-            }}>
-              ⚡ Daily Generation Limit
-            </div>
-            <div style={{
-              fontFamily: "'Inter', sans-serif", fontSize: 12,
-              color: 'rgba(255,255,255,0.5)', lineHeight: 1.6,
-            }}>
-              You can generate{' '}
-              <span style={{ color: '#7eb3ff', fontWeight: 600 }}>5 itineraries</span> per day.<br />
-              <span style={{ color: remaining === 0 ? '#f87171' : 'rgba(255,255,255,0.5)' }}>
-                {remaining === 0
-                  ? '🚫 No generations left today.'
-                  : `✅ ${remaining} generation${remaining === 1 ? '' : 's'} remaining.`}
-              </span><br />
-              Limit resets at{' '}
-              <span style={{ color: '#2dd4bf', fontWeight: 600 }}>12:00 AM</span> midnight.
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
-// ── Dashboard Page ────────────────────────────────────────────
 export default function DashboardPage() {
   const [current, setCurrent] = useState(0)
-  const [typeText, setTypeText] = useState('')
-  const [typeIndex, setTypeIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
-  const [deleting, setDeleting] = useState(false)
   const [rateLimit, setRateLimit] = useState({ remaining: 5, limit: 5 })
-  const [searchVal, setSearchVal] = useState('')
   const [showLimitModal, setShowLimitModal] = useState(false)
   const { logout } = useAuth()
   const navigate = useNavigate()
 
   const isLimitExhausted = rateLimit.remaining === 0
 
-  // Preload images
-  useEffect(() => {
-    IMAGES.forEach(src => { const img = new Image(); img.src = src })
-  }, [])
-
-  // Crossfade every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent(prev => (prev + 1) % IMAGES.length)
@@ -195,31 +34,6 @@ export default function DashboardPage() {
     return () => clearInterval(timer)
   }, [])
 
-  // Typewriter effect
-  useEffect(() => {
-    const current_word = TYPEWRITER_DESTINATIONS[typeIndex]
-    let timer
-    if (!deleting && charIndex <= current_word.length) {
-      timer = setTimeout(() => {
-        setTypeText(current_word.slice(0, charIndex))
-        setCharIndex(c => c + 1)
-      }, 70)
-    } else if (!deleting && charIndex > current_word.length) {
-      timer = setTimeout(() => setDeleting(true), 1800)
-    } else if (deleting && charIndex >= 0) {
-      timer = setTimeout(() => {
-        setTypeText(current_word.slice(0, charIndex))
-        setCharIndex(c => c - 1)
-      }, 35)
-    } else if (deleting && charIndex < 0) {
-      setDeleting(false)
-      setTypeIndex(i => (i + 1) % TYPEWRITER_DESTINATIONS.length)
-      setCharIndex(0)
-    }
-    return () => clearTimeout(timer)
-  }, [charIndex, deleting, typeIndex])
-
-  // Rate limit fetch
   const fetchRateLimit = () => {
     api.get('/rate-limit/')
       .then(res => setRateLimit(res.data))
@@ -240,8 +54,8 @@ export default function DashboardPage() {
     navigate('/auth')
   }
 
-  const handleSearch = () => {
-    if (!searchVal.trim()) {
+  const handleSearch = (destination) => {
+    if (!destination.trim()) {
       toast.error('Please enter a destination first!')
       return
     }
@@ -249,110 +63,25 @@ export default function DashboardPage() {
       setShowLimitModal(true)
       return
     }
-    navigate('/plan', { state: { destination: searchVal.trim() } })
+    navigate('/plan', { state: { destination: destination.trim() } })
   }
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <CrossfadeBackground images={IMAGES} currentIndex={current} />
 
-      {/* Crossfading Background */}
-      {IMAGES.map((img, i) => (
-        <div key={i} style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: i === current ? 1 : 0,
-          transition: 'opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          zIndex: i === current ? 1 : 0,
-        }} />
-      ))}
+      <TopBar
+        rateLimit={rateLimit}
+        onHistory={() => navigate('/history')}
+        onLogout={handleLogout}
+      />
 
-      {/* Overlay */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 2,
-        background: `
-          linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.5) 100%),
-          radial-gradient(ellipse at 50% 60%, rgba(79,142,247,0.12) 0%, transparent 65%)
-        `,
-      }} />
-
-      {/* Top Right — Rate Limit Badge + Nav Buttons */}
-      <div style={{
-        position: 'absolute', top: 20, right: 20, zIndex: 10,
-        display: 'flex', alignItems: 'center', gap: 10,
-      }}>
-
-        {/* Rate Limit Badge with Tooltip */}
-        <LimitTooltip remaining={rateLimit.remaining}>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            height: 36, padding: '0 14px', borderRadius: 100,
-            background: isLimitExhausted
-              ? 'rgba(248,113,113,0.15)'
-              : 'rgba(8,8,18,0.40)',
-            backdropFilter: 'blur(40px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-            border: isLimitExhausted
-              ? '1px solid rgba(248,113,113,0.3)'
-              : '1px solid rgba(255,255,255,0.13)',
-            cursor: 'pointer', boxSizing: 'border-box', margin: 0,
-            fontFamily: "'Inter', sans-serif", fontSize: 13,
-          }}>
-            <Zap
-              size={13}
-              color={isLimitExhausted ? '#f87171' : '#fbbf24'}
-              fill={isLimitExhausted ? '#f87171' : '#fbbf24'}
-            />
-            <span style={{
-              fontWeight: 600,
-              color: isLimitExhausted ? '#f87171' : 'rgba(255,255,255,0.85)',
-            }}>
-              {rateLimit.remaining}/{rateLimit.limit} left
-            </span>
-          </button>
-        </LimitTooltip>
-
-        {/* History Button */}
-        <button onClick={() => navigate('/history')} style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          height: 36, padding: '0 14px', borderRadius: 100,
-          background: 'rgba(8,8,18,0.40)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          border: '1px solid rgba(255,255,255,0.13)',
-          color: 'rgba(255,255,255,0.85)', fontFamily: "'Inter', sans-serif",
-          fontSize: 13, cursor: 'pointer',
-          boxSizing: 'border-box', margin: 0,
-        }}>
-          <History size={13} /> History
-        </button>
-
-        {/* Logout Button */}
-        <button onClick={handleLogout} style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          height: 36, padding: '0 14px', borderRadius: 100,
-          background: 'rgba(8,8,18,0.40)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          border: '1px solid rgba(255,255,255,0.13)',
-          color: 'rgba(255,255,255,0.85)', fontFamily: "'Inter', sans-serif",
-          fontSize: 13, cursor: 'pointer',
-          boxSizing: 'border-box', margin: 0,
-        }}>
-          <LogOut size={13} /> Logout
-        </button>
-      </div>
-
-      {/* Center Content */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 5,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         padding: '24px', gap: 32,
       }}>
-
-        {/* Hero Text */}
         <div style={{ textAlign: 'center', animation: 'fadeInUp 0.7s ease both' }}>
           <h1 style={{
             fontFamily: "'Poppins', sans-serif",
@@ -373,98 +102,9 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Search Card */}
-        <div style={{ width: '100%', maxWidth: 580, animation: 'fadeInUp 0.7s ease 0.15s both' }}>
-          <div style={{
-            background: 'rgba(8,8,18,0.72)',
-            backdropFilter: 'blur(40px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-            border: '1px solid rgba(255,255,255,0.13)',
-            borderTop: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: 24, padding: 'clamp(18px, 4vw, 28px)',
-            boxShadow: '0 24px 60px rgba(0,0,0,0.65)',
-          }}>
-            <label style={{
-              fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
-              color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase',
-              letterSpacing: '0.1em', marginBottom: 12, display: 'block',
-            }}>
-              🌍 Plan a trip to
-            </label>
-
-            {/* Search Input Row */}
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
-                <input
-                  value={searchVal}
-                  onChange={e => setSearchVal(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                  placeholder={typeText + '|'}
-                  style={{
-                    width: '100%',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: 14, color: '#ffffff',
-                    fontSize: 'clamp(15px, 3.5vw, 18px)', fontFamily: "'Inter', sans-serif",
-                    fontWeight: 400, padding: '16px 20px',
-                    outline: 'none', transition: 'all 0.3s ease',
-                    boxSizing: 'border-box',
-                  }}
-                  onFocus={e => {
-                    e.target.style.borderColor = 'rgba(79,142,247,0.6)'
-                    e.target.style.background = 'rgba(79,142,247,0.06)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(79,142,247,0.12)'
-                  }}
-                  onBlur={e => {
-                    e.target.style.borderColor = 'rgba(255,255,255,0.12)'
-                    e.target.style.background = 'rgba(255,255,255,0.06)'
-                    e.target.style.boxShadow = 'none'
-                  }}
-                />
-              </div>
-
-              {/* Arrow Button — disabled when limit exhausted */}
-              <button
-                onClick={handleSearch}
-                style={{
-                  width: 54, height: 54, borderRadius: 14, flexShrink: 0,
-                  background: isLimitExhausted
-                    ? 'rgba(255,255,255,0.08)'
-                    : 'linear-gradient(135deg, #4f8ef7, #a855f7)',
-                  border: isLimitExhausted
-                    ? '1px solid rgba(255,255,255,0.1)'
-                    : 'none',
-                  cursor: isLimitExhausted ? 'not-allowed' : 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 22, color: '#fff',
-                  boxShadow: isLimitExhausted
-                    ? 'none'
-                    : '0 4px 20px rgba(79,142,247,0.45)',
-                  opacity: isLimitExhausted ? 0.4 : 1,
-                  transition: 'all 0.25s ease',
-                }}
-                onMouseEnter={e => {
-                  if (isLimitExhausted) return
-                  e.currentTarget.style.transform = 'scale(1.08)'
-                  e.currentTarget.style.boxShadow = '0 6px 28px rgba(79,142,247,0.6)'
-                }}
-                onMouseLeave={e => {
-                  if (isLimitExhausted) {
-                    e.currentTarget.style.transform = 'scale(1)'
-                    return
-                  }
-                  e.currentTarget.style.transform = 'scale(1)'
-                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(79,142,247,0.45)'
-                }}
-              >
-                →
-              </button>
-            </div>
-          </div>
-        </div>
+        <SearchCard onSearch={handleSearch} isLimitExhausted={isLimitExhausted} />
       </div>
 
-      {/* Limit Modal */}
       <AnimatePresence>
         {showLimitModal && (
           <LimitModal onClose={() => setShowLimitModal(false)} />
