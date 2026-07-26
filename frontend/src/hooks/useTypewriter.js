@@ -34,7 +34,7 @@ export default function useTypewriter() {
       setTypeIndex(i => (i + 1) % TYPEWRITER_DESTINATIONS.length)
       setCharIndex(0)
     }
-    return () => clearTimeout(timer)
+    return () => clearTimeout(timer)  
   }, [charIndex, deleting, typeIndex])
 
   return typeText
