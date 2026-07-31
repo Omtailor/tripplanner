@@ -22,7 +22,6 @@
   <img src="https://img.shields.io/badge/Django-6.0-092E20?style=flat-square&logo=django&logoColor=white"/>
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black"/>
   <img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=flat-square&logo=postgresql&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Redis-Upstash-DC382D?style=flat-square&logo=redis&logoColor=white"/>
   <img src="https://img.shields.io/badge/Gemini-API-8E75B2?style=flat-square&logo=google&logoColor=white"/>
   <img src="https://img.shields.io/badge/Pydantic-v2-E92063?style=flat-square&logo=pydantic&logoColor=white"/>
 </p>
@@ -100,7 +99,7 @@
 | ✅ Summary | Review and edit everything before generating |
 
 ### ⚡ Performance & Rate Limiting
-- **Redis** enforces **5 generations/day** and **10 per-day regenerations/day** per user — zero database hits for rate checks
+- **Database-backed** rate limiting enforces **5 generations/day** and **10 per-day regenerations/day** per user
 - Generation quota shown live in the dashboard navbar (`⚡ 4/5 left`)
 - Animated loading screen with rotating travel copy during generation
 
@@ -130,7 +129,6 @@
 | **Backend** | Django 6, Django REST Framework |
 | **Frontend** | React 18, Framer Motion, Vite |
 | **Database** | PostgreSQL (Neon) |
-| **Cache / Rate Limiting** | Redis (Upstash), django-redis |
 | **AI** | Google Gemini API (`gemini-2.5-flash`) |
 | **Validation** | Pydantic v2 |
 | **Auth** | JWT — djangorestframework-simplejwt |
@@ -145,7 +143,6 @@
 - Python 3.11+
 - Node.js 18+
 - PostgreSQL
-- Redis
 
 ### 1. Clone the repo
 
@@ -198,9 +195,6 @@ DB_PASSWORD=your_db_password
 DB_HOST=your_db_host
 DB_PORT=5432
 
-# Redis
-REDIS_URL=redis://localhost:6379/0
-
 # Gemini AI
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash
@@ -222,7 +216,7 @@ tripplanner/
 ├── itinerary/                  # Core app
 │   ├── gemini_service.py       # Prompt builder + Gemini API calls + retry logic
 │   ├── schemas.py              # Pydantic v2 validation models
-│   ├── validators.py           # Redis-based rate limiting
+│   ├── validators.py           # Database-based rate limiting
 │   ├── views.py                # API endpoints
 │   ├── serializers.py          # DRF serializers
 │   ├── models.py               # Trip & itinerary DB models
@@ -233,7 +227,7 @@ tripplanner/
 │       ├── pages/              # Auth, Dashboard, Planner, Itinerary, History
 │       ├── components/         # Reusable UI components
 │       ├── context/            # Auth context
-│       ├── hooks/              # Custom React hooks
+│       ├── hooks/               # Custom React hooks
 │       └── api/                # Axios API layer
 ├── requirements.txt
 ├── procfile                    # Deployment process file
@@ -244,12 +238,12 @@ tripplanner/
 
 ## 🔒 Rate Limiting Logic
 
-Enforced via **Redis TTL-based keys** — no database queries for rate checks:
+Enforced via **database-tracked counters** — reset daily:
 
 | Action | Limit | Reset |
 |--------|-------|-------|
-| New itinerary generations | **5 per day** per user | Midnight (24h TTL) |
-| Per-day regenerations | **10 per day** per user | Midnight (24h TTL) |
+| New itinerary generations | **5 per day** per user | Midnight (24h) |
+| Per-day regenerations | **10 per day** per user | Midnight (24h) |
 
 ***
 
@@ -274,7 +268,6 @@ Every Gemini response is parsed and validated against a strict **Pydantic v2 sch
 | Frontend | **Vercel** | Auto-deploys on push |
 | Backend | **Render** | Gunicorn + Whitenoise |
 | PostgreSQL | **Neon** | Free tier, SSL required |
-| Redis | **Upstash** | Free tier, TLS |
 
 ***
 
