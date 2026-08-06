@@ -5,7 +5,7 @@ from .views import (
     ItineraryHistoryView,
     RateLimitView,
     ItineraryDetailView,
-    DeleteItineraryView,  # ← add this
+    DeleteItineraryView,
 )
 
 urlpatterns = [
@@ -14,7 +14,7 @@ urlpatterns = [
     path("<int:pk>/regen-day/", RegenerateDayView.as_view(), name="regen-day"),
     path(
         "<int:pk>/delete/", DeleteItineraryView.as_view(), name="delete"
-    ),  # ← add this
+    ),
     path("history/", ItineraryHistoryView.as_view(), name="history"),
     path("rate-limit/", RateLimitView.as_view(), name="rate-limit"),
 ]

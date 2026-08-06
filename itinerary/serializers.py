@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Trip, Itinerary, DayRegeneration
+from .models import Trip, Itinerary
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class TripSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "days",
-            "travelers",  # FIX — added
+            "travelers",
             "group_type",
             "meal_pref",
             "vibe",
@@ -40,17 +40,3 @@ class ItinerarySerializer(serializers.ModelSerializer):
     def get_summary(self, obj):
         data = obj.days_data or {}
         return data.get("summary", {})
-
-
-class DayRegenerationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DayRegeneration
-        fields = [
-            "id",
-            "itinerary",
-            "day_number",
-            "old_json",
-            "new_json",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]

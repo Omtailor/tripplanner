@@ -1,5 +1,4 @@
 from collections import Counter
-from .schemas import DayPlan
 
 
 def validate_geographic_clustering(days: list) -> None:

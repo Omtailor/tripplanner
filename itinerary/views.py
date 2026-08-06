@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from .gemini_service import generate_itinerary, regenerate_day
 from .models import DayRegeneration, Itinerary, Trip
-from .serializers import ItinerarySerializer, TripSerializer
+from .serializers import ItinerarySerializer
 from .validators import run_all_validators
 
 

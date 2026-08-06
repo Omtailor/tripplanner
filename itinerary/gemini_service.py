@@ -1,7 +1,7 @@
 import json
 import re
 from datetime import date, timedelta
-from typing import Any, Optional
+from typing import Any
 import requests
 
 from decouple import config

@@ -42,7 +42,7 @@ class Trip(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     days = models.PositiveIntegerField()
-    travelers = models.PositiveIntegerField(default=1)  # FIX — added
+    travelers = models.PositiveIntegerField(default=1)
     group_type = models.CharField(max_length=10, choices=GROUP_CHOICES)
     meal_pref = models.CharField(max_length=10, choices=MEAL_CHOICES)
     vibe = models.CharField(max_length=15, choices=VIBE_CHOICES)

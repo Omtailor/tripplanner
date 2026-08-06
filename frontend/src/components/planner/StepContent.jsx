@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import DatePicker from 'react-datepicker'
-import "react-datepicker/dist/react-datepicker.css"
 import { Calendar, DollarSign, Sparkles, MapPin, Utensils, Users, Check } from 'lucide-react'
 import { CITIES } from '../../constants/planner'
 import { labelSt } from '../../utils/planner'
