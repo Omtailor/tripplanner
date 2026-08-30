@@ -3,13 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
-import { ClipLoader } from 'react-spinners'
-import { ArrowLeft, ArrowRight, Plane } from 'lucide-react'
 import { toTitleCase, slideVariants } from '../utils/planner'
 import { CITIES } from '../constants/planner'
 import GeneratingOverlay from '../components/planner/GeneratingOverlay'
 import StepProgress from '../components/planner/StepProgress'
 import StepContent from '../components/planner/StepContent'
+import PlannerBackground from '../components/planner/PlannerBackground'
+import PlannerFooter from '../components/planner/PlannerFooter'
 
 export default function PlannerPage() {
   const navigate = useNavigate()
@@ -100,23 +100,10 @@ export default function PlannerPage() {
           boxSizing: 'border-box',
         }}
       >
-        {/* Soft Bokeh Background */}
-        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
-          <div style={{
-            position: 'absolute', width: '50vw', height: '50vw',
-            background: 'radial-gradient(circle, rgba(123,97,255,0.06) 0%, transparent 60%)',
-            top: '-10%', left: '-10%', borderRadius: '50%',
-          }} />
-          <div style={{
-            position: 'absolute', width: '60vw', height: '60vw',
-            background: 'radial-gradient(circle, rgba(79,142,247,0.05) 0%, transparent 60%)',
-            bottom: '-20%', right: '-10%', borderRadius: '50%',
-          }} />
-        </div>
+        <PlannerBackground />
 
         <StepProgress step={step} paginate={paginate} />
 
-        {/* Glass card */}
         <div style={{
           width: '100%', maxWidth: 600, zIndex: 1, position: 'relative',
           background: 'rgba(255,255,255,0.04)',
@@ -130,13 +117,11 @@ export default function PlannerPage() {
           display: 'flex', flexDirection: 'column',
           boxSizing: 'border-box',
         }}>
-          {/* Inner Highlight */}
           <div style={{
             position: 'absolute', top: 0, left: 0, right: 0, height: 1,
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
           }} />
 
-          {/* Scrollable step content */}
           <div style={{
             flex: 1,
             overflowY: 'auto',
@@ -149,7 +134,7 @@ export default function PlannerPage() {
               <motion.div
                 key={step} custom={direction} variants={slideVariants}
                 initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.2, ease: "easeOut" }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 style={{ display: 'flex', flexDirection: 'column' }}
               >
                 <StepContent
@@ -165,74 +150,15 @@ export default function PlannerPage() {
             </AnimatePresence>
           </div>
 
-          {/* Sticky footer with buttons */}
-          <div style={{
-            flexShrink: 0,
-            display: 'flex',
-            justifyContent: step === 1 ? 'flex-end' : 'space-between',
-            alignItems: 'center',
-            gap: 12,
-            padding: 'clamp(14px, 2.5vw, 20px) clamp(24px, 5vw, 36px)',
-            borderTop: '1px solid rgba(255,255,255,0.07)',
-            background: 'rgba(8,12,26,0.5)',
-            borderRadius: '0 0 24px 24px',
-          }}>
-            {step > 1 && (
-              <motion.button
-                whileHover={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => paginate(step - 1)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '12px 20px', borderRadius: 999,
-                  background: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                  color: 'rgba(255,255,255,0.9)', fontFamily: "'Inter', sans-serif",
-                  fontSize: 15, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s',
-                }}>
-                <ArrowLeft size={16} /> Back
-              </motion.button>
-            )}
-
-            {step < 7 && (
-              <motion.button
-                whileHover={canNext() ? { y: -1, boxShadow: '0 8px 20px rgba(123,97,255,0.3)' } : {}}
-                whileTap={canNext() ? { scale: 0.98 } : {}}
-                onClick={() => canNext() && paginate(step + 1)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '12px 24px', borderRadius: 999,
-                  background: canNext() ? 'linear-gradient(90deg, #7b61ff, #4f8ef7)' : 'rgba(255,255,255,0.08)',
-                  border: 'none',
-                  color: canNext() ? '#fff' : 'rgba(255,255,255,0.3)',
-                  fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 600,
-                  cursor: canNext() ? 'pointer' : 'not-allowed', transition: 'all 0.2s',
-                  boxShadow: canNext() ? 'inset 0 1px 1px rgba(255,255,255,0.2)' : 'none',
-                }}>
-                Next <ArrowRight size={16} />
-              </motion.button>
-            )}
-
-            {step === 7 && (
-              <motion.button
-                whileHover={!generating ? { y: -1, boxShadow: '0 8px 24px rgba(123,97,255,0.4)' } : {}}
-                onClick={generate}
-                disabled={generating}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '12px 28px', borderRadius: 999,
-                  background: generating ? 'rgba(123,97,255,0.4)' : 'linear-gradient(90deg, #7b61ff, #4f8ef7)',
-                  border: 'none', color: '#fff',
-                  fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 600,
-                  cursor: generating ? 'wait' : 'pointer', transition: 'all 0.2s',
-                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3)',
-                }}>
-                {generating ? <ClipLoader size={16} color="#fff" /> : <><Plane size={16} /> Generate Itinerary</>}
-              </motion.button>
-            )}
-          </div>
+          <PlannerFooter
+            step={step}
+            generating={generating}
+            canNext={canNext}
+            paginate={paginate}
+            generate={generate}
+          />
         </div>
 
-        {/* Global Styles */}
         <style>{`
           .glass-input, .glass-input-field {
             width: 100%;

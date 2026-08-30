@@ -2,13 +2,18 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
-import { ClipLoader } from 'react-spinners'
 
 import bg1 from '../assets/auth/bg1.jpg'
 import bg2 from '../assets/auth/bg2.jpg'
 import bg3 from '../assets/auth/bg3.jpg'
 import bg4 from '../assets/auth/bg4.jpg'
 import bg5 from '../assets/auth/bg5.jpg'
+
+import AuthBackgroundSlider from '../components/auth/AuthBackgroundSlider'
+import AuthHeader from '../components/auth/AuthHeader'
+import AuthInputField from '../components/auth/AuthInputField'
+import AuthSubmitButton from '../components/auth/AuthSubmitButton'
+import AuthTogglePrompt from '../components/auth/AuthTogglePrompt'
 
 const IMAGES = [bg1, bg2, bg3, bg4, bg5]
 
@@ -67,30 +72,15 @@ export default function AuthPage() {
   }
 
   return (
-    // ✅ FIX 1: margin: 0 and left: 0 ensure no offset from parent layout
     <div style={{
-      position: 'fixed',   // ✅ FIX 2: fixed instead of absolute — always covers full viewport
+      position: 'fixed',
       top: 0, left: 0,
       width: '100vw', height: '100vh',
       overflow: 'hidden',
       margin: 0, padding: 0,
     }}>
+      <AuthBackgroundSlider images={IMAGES} current={current} />
 
-      {/* ── Crossfading Background Images ── */}
-      {IMAGES.map((img, i) => (
-        <div key={i} style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',   // ✅ FIX 3: prevent tiling on wide screens
-          opacity: i === current ? 1 : 0,
-          transition: 'opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          zIndex: i === current ? 1 : 0,
-        }} />
-      ))}
-
-      {/* ── Dark + Color Overlay ── */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 2,
         background: `
@@ -100,59 +90,32 @@ export default function AuthPage() {
         `,
       }} />
 
-      {/* ── Centered Card ── */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 3,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 24,
-        boxSizing: 'border-box',   // ✅ FIX 4: padding doesn't push card off-center
+        boxSizing: 'border-box',
       }}>
         <div style={{
-          width: '100%', maxWidth: 400,   // ✅ FIX 5: 480 fits better on most screens
-          background: 'rgba(8, 8, 18, 0.39)',              // ✅ 0.55→0.28 much more transparent
-          backdropFilter: 'blur(60px) saturate(200%)',      // ✅ stronger blur for glass feel
+          width: '100%', maxWidth: 400,
+          background: 'rgba(8, 8, 18, 0.39)',
+          backdropFilter: 'blur(60px) saturate(200%)',
           WebkitBackdropFilter: 'blur(60px) saturate(200%)',
-          border: '1px solid rgba(255,255,255,0.18)',       // ✅ slightly brighter border
-          borderTop: '1px solid rgba(255,255,255,0.35)',    // ✅ brighter top highlight
+          border: '1px solid rgba(255,255,255,0.18)',
+          borderTop: '1px solid rgba(255,255,255,0.35)',
           borderRadius: 24,
-          padding: 'clamp(20px, 4vw, 36px) clamp(16px, 4vw, 32px)',  // ✅ tighter padding
-          boxSizing: 'border-box',   // ✅ FIX 6: prevents overflow on mobile
+          padding: 'clamp(20px, 4vw, 36px) clamp(16px, 4vw, 32px)',
+          boxSizing: 'border-box',
           boxShadow: '0 24px 60px rgba(0,0,0,0.65)',
           animation: 'fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1) both',
         }}>
+          <AuthHeader isLogin={isLogin} />
 
-          {/* Logo */}
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>✈️</div>
-            <div style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 700,
-              background: 'linear-gradient(135deg, #4f8ef7, #a855f7)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              marginBottom: 8,
-            }}>
-              TripPlanner
-            </div>
-            <p style={{
-              fontFamily: "'Inter', sans-serif",
-              color: 'rgba(255,255,255,0.5)',
-              fontSize: 16, fontWeight: 400,
-              margin: 0,
-            }}>
-              {isLogin ? 'Sign in to plan your next adventure' : 'Create your account to get started'}
-            </p>
-          </div>
-
-          {/* Form */}
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-
             {!isLogin && (
               <div style={{ animation: 'fadeInUp 0.3s ease both' }}>
-                <label style={labelStyle}>Full Name</label>
-                <input
-                  className="glass-input"
+                <AuthInputField
+                  label="Full Name"
                   name="name"
                   placeholder="John Doe"
                   value={form.name}
@@ -163,116 +126,50 @@ export default function AuthPage() {
               </div>
             )}
 
-            <div>
-              <label style={labelStyle}>Email Address</label>
-              <input
-                className="glass-input"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={handle}
-                required
-                style={inputStyle}
-              />
-            </div>
+            <AuthInputField
+              label="Email Address"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handle}
+              required
+              style={inputStyle}
+            />
 
-            <div>
-              <label style={labelStyle}>Password</label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  className="glass-input"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={handle}
-                  required
-                  style={{ ...inputStyle, paddingRight: 50 }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(prev => !prev)}
-                  style={{
-                    position: 'absolute', right: 14, top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none', border: 'none',
-                    cursor: 'pointer', padding: 4,
-                    color: 'rgba(255,255,255,0.5)',
-                    fontSize: 18, lineHeight: 1,
-                    transition: 'color 0.2s',
-                  }}
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
+            <AuthInputField
+              label="Password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={form.password}
+              onChange={handle}
+              required
+              showPasswordToggle
+              showPassword={showPassword}
+              onTogglePassword={() => setShowPassword(prev => !prev)}
+              style={inputStyle}
+            />
 
-            <button type="submit" disabled={loading} style={{
-              marginTop: 4,
-              width: '100%', padding: '17px',
-              background: loading
-                ? 'rgba(79,142,247,0.35)'
-                : 'linear-gradient(135deg, #4f8ef7 0%, #a855f7 100%)',
-              color: 'white', border: 'none',
-              borderRadius: 14,
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 16, fontWeight: 600,
-              letterSpacing: '0.02em',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease',
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'center', gap: 10,
-              boxShadow: loading ? 'none' : '0 4px 24px rgba(79,142,247,0.45)',
-            }}>
-              {loading
-                ? <><ClipLoader size={16} color="#fff" /><span>Please wait...</span></>
-                : isLogin ? 'Sign In →' : 'Create Account →'
-              }
-            </button>
+            <AuthSubmitButton loading={loading} isLogin={isLogin} />
           </form>
 
-          {/* Divider */}
           <div style={{
             height: 1, margin: '24px 0',
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)'
           }} />
 
-          {/* Toggle */}
-          <p style={{
-            textAlign: 'center',
-            fontFamily: "'Inter', sans-serif",
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: 15,
-            margin: 0,
-          }}>
-            {isLogin ? "Don't have an account? " : 'Already have an account? '}
-            <span
-              onClick={() => { setIsLogin(!isLogin); setForm({ name: '', email: '', password: '' }) }}
-              style={{ color: '#7eb3ff', cursor: 'pointer', fontWeight: 600, transition: 'color 0.2s' }}
-            >
-              {isLogin ? 'Sign up free' : 'Sign in'}
-            </span>
-          </p>
-
+          <AuthTogglePrompt
+            isLogin={isLogin}
+            onToggle={() => {
+              setIsLogin(!isLogin)
+              setForm({ name: '', email: '', password: '' })
+            }}
+          />
         </div>
       </div>
-
-
-
     </div>
   )
-}
-
-const labelStyle = {
-  fontFamily: "'Inter', sans-serif",
-  fontSize: 14, fontWeight: 700,
-  color: 'rgba(255,255,255,0.7)',
-  marginBottom: 10,
-  display: 'block',
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
 }
 
 const inputStyle = {
@@ -283,6 +180,6 @@ const inputStyle = {
   color: '#ffffff',
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: 14,
-  width: '100%',              // ✅ FIX 7: inputs stretch full card width
-  boxSizing: 'border-box',   // ✅ FIX 8: padding included in width calculation
+  width: '100%',
+  boxSizing: 'border-box',
 }
