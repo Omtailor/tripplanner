@@ -6,6 +6,16 @@ const TYPEWRITER_DESTINATIONS = [
   'Rajasthan on a budget...',
   'Kerala backwaters...',
   'Ladakh on a bike...',
+  'Shimla for snow...',
+  'Udaipur with romance...',
+  'Gokarna for peace...',
+  'Coorg in monsoon...',
+  'Bikaner for heritage...',
+  'Mussoorie weekend getaway...',
+  'Andaman island escape...',
+  'Kashmir valley views...',
+  'Hampi historical trails...',
+  'Munnar tea gardens...',
 ]
 
 export default function useTypewriter() {
@@ -34,7 +44,7 @@ export default function useTypewriter() {
       setTypeIndex(i => (i + 1) % TYPEWRITER_DESTINATIONS.length)
       setCharIndex(0)
     }
-    return () => clearTimeout(timer)  
+    return () => clearTimeout(timer)
   }, [charIndex, deleting, typeIndex])
 
   return typeText
