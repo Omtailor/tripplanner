@@ -15,10 +15,16 @@ import CrossfadeBackground from '../components/shared/CrossfadeBackground'
 import TopBar from '../components/dashboard/TopBar'
 import SearchCard from '../components/dashboard/SearchCard'
 import LimitModal from '../components/shared/LimitModal'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 
 const IMAGES = [d1, d2, d3, d4, d5]
 
 export default function DashboardPage() {
+  useDocumentMeta({
+    title: 'Dashboard | TripPlanner',
+    description: 'Choose a destination and start planning your next personalized trip.',
+    noindex: true,
+  })
   const [current, setCurrent] = useState(0)
   const [rateLimit, setRateLimit] = useState({ remaining: 5, limit: 5 })
   const [showLimitModal, setShowLimitModal] = useState(false)
@@ -28,6 +34,7 @@ export default function DashboardPage() {
   const isLimitExhausted = rateLimit.remaining === 0
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
     const timer = setInterval(() => {
       setCurrent(prev => (prev + 1) % IMAGES.length)
     }, 5000)
@@ -67,7 +74,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <main id="main-content" style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <CrossfadeBackground images={IMAGES} currentIndex={current} />
 
       <TopBar
@@ -120,6 +127,6 @@ export default function DashboardPage() {
           color: rgba(255, 255, 255, 0.3);
         }
       `}</style>
-    </div>
+    </main>
   )
 }

@@ -9,6 +9,12 @@ export default function StepContent({
   step, data, update, days,
   citySearch, setCitySearch, filteredCities
 }) {
+  const handleOptionKeyDown = (event, value, key) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      update(key, value)
+    }
+  }
 
   if (step === 1) {
     return (
@@ -19,6 +25,7 @@ export default function StepContent({
             <div>
               <label style={labelSt}>Start Date</label>
               <DatePicker
+                id="start-date"
                 selected={data.start_date}
                 onChange={d => {
                   update('start_date', d)
@@ -35,6 +42,7 @@ export default function StepContent({
             <div>
               <label style={labelSt}>End Date</label>
               <DatePicker
+                id="end-date"
                 selected={data.end_date}
                 onChange={d => update('end_date', d)}
                 minDate={data.start_date || new Date()}
@@ -72,13 +80,13 @@ export default function StepContent({
     return (
       <div>
         <StepHeader icon={<DollarSign size={20} color="#4f8ef7" />} title="What's your budget?" sub="Choose your comfort level." />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 24 }}>
+        <div role="radiogroup" aria-label="Budget" style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 24 }}>
           {[
             { id: 'low', label: 'Budget', desc: 'Hostels, street food, public transit' },
             { id: 'mid', label: 'Mid-range', desc: 'Standard hotels, restaurants, cabs' },
             { id: 'high', label: 'Luxury', desc: 'Resorts, fine dining, private drivers' },
           ].map(b => (
-            <motion.div key={b.id} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => update('budget_tier', b.id)} style={{
+            <motion.div key={b.id} role="radio" aria-checked={data.budget_tier === b.id} tabIndex={0} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={() => update('budget_tier', b.id)} onKeyDown={e => handleOptionKeyDown(e, b.id, 'budget_tier')} style={{
               padding: '16px 20px', borderRadius: 16, cursor: 'pointer', transition: 'all 0.2s',
               background: data.budget_tier === b.id ? 'linear-gradient(135deg, rgba(123,97,255,0.2), rgba(79,142,247,0.2))' : 'rgba(255,255,255,0.04)',
               border: data.budget_tier === b.id ? '1px solid rgba(123,97,255,0.5)' : '1px solid rgba(255,255,255,0.08)',
@@ -102,14 +110,14 @@ export default function StepContent({
     return (
       <div>
         <StepHeader icon={<Sparkles size={20} color="#f472b6" />} title="What's the vibe?" sub="Pick the main mood for your trip." />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 24 }}>
+        <div role="radiogroup" aria-label="Trip vibe" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 24 }}>
           {[
             { id: 'relax', label: 'Chill & Relax' },
             { id: 'adventure', label: 'Adventure' },
             { id: 'culture', label: 'Culture & History' },
             { id: 'mixed', label: 'A bit of everything' },
           ].map(v => (
-            <motion.div key={v.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('vibe', v.id)} style={{
+            <motion.div key={v.id} role="radio" aria-checked={data.vibe === v.id} tabIndex={0} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('vibe', v.id)} onKeyDown={e => handleOptionKeyDown(e, v.id, 'vibe')} style={{
               padding: '18px 16px', borderRadius: 16, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
               background: data.vibe === v.id ? 'linear-gradient(135deg, rgba(244,114,182,0.2), rgba(123,97,255,0.2))' : 'rgba(255,255,255,0.04)',
               border: data.vibe === v.id ? '1px solid rgba(244,114,182,0.5)' : '1px solid rgba(255,255,255,0.08)',
@@ -131,7 +139,9 @@ export default function StepContent({
       <div>
         <StepHeader icon={<MapPin size={20} color="#2dd4bf" />} title="Where are you leaving from?" sub="We need this to suggest travel routes." />
         <div style={{ marginTop: 24 }}>
+          <label htmlFor="origin-city" className="visually-hidden">Search origin city</label>
           <input
+            id="origin-city"
             placeholder="Search your origin city..."
             value={citySearch}
             onChange={e => { setCitySearch(e.target.value); update('origin', '') }}
@@ -150,7 +160,7 @@ export default function StepContent({
           />
           <div style={{ maxHeight: 180, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
             {filteredCities.slice(0, 15).map(city => (
-              <span key={city} onClick={() => { update('origin', city); setCitySearch(city) }} style={{
+              <button type="button" key={city} onClick={() => { update('origin', city); setCitySearch(city) }} aria-pressed={data.origin === city} style={{
                 padding: '8px 16px', borderRadius: 999, fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 500,
                 background: data.origin === city ? 'rgba(45,212,191,0.2)' : 'rgba(255,255,255,0.04)',
                 border: data.origin === city ? '1px solid rgba(45,212,191,0.5)' : '1px solid rgba(255,255,255,0.1)',
@@ -158,7 +168,7 @@ export default function StepContent({
                 cursor: 'pointer', transition: 'all 0.2s',
               }}>
                 {city}
-              </span>
+              </button>
             ))}
           </div>
         </div>
@@ -170,12 +180,12 @@ export default function StepContent({
     return (
       <div>
         <StepHeader icon={<Utensils size={20} color="#fbbf24" />} title="Food preferences?" sub="We'll tailor restaurant suggestions." />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 24 }}>
+        <div role="radiogroup" aria-label="Meal preference" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 24 }}>
           {[
             { id: 'veg', label: 'Vegetarian', desc: 'Pure veg options' },
             { id: 'non-veg', label: 'Non-Vegetarian', desc: 'All cuisines' },
           ].map(m => (
-            <motion.div key={m.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('meal_pref', m.id)} style={{
+            <motion.div key={m.id} role="radio" aria-checked={data.meal_pref === m.id} tabIndex={0} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('meal_pref', m.id)} onKeyDown={e => handleOptionKeyDown(e, m.id, 'meal_pref')} style={{
               padding: '24px 16px', borderRadius: 16, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
               background: data.meal_pref === m.id ? 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.15))' : 'rgba(255,255,255,0.04)',
               border: data.meal_pref === m.id ? '1px solid rgba(251,191,36,0.5)' : '1px solid rgba(255,255,255,0.08)',
@@ -193,14 +203,14 @@ export default function StepContent({
     return (
       <div>
         <StepHeader icon={<Users size={20} color="#a855f7" />} title="Who's travelling?" sub="Helps us suggest the right activities." />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 24 }}>
+        <div role="radiogroup" aria-label="Travelling group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 24 }}>
           {[
             { id: 'solo', label: 'Solo' },
             { id: 'couple', label: 'Couple' },
             { id: 'friends', label: 'Friends' },
             { id: 'family', label: 'Family' },
           ].map(g => (
-            <motion.div key={g.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('group_type', g.id)} style={{
+            <motion.div key={g.id} role="radio" aria-checked={data.group_type === g.id} tabIndex={0} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => update('group_type', g.id)} onKeyDown={e => handleOptionKeyDown(e, g.id, 'group_type')} style={{
               padding: '18px 16px', borderRadius: 16, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s',
               background: data.group_type === g.id ? 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(123,97,255,0.2))' : 'rgba(255,255,255,0.04)',
               border: data.group_type === g.id ? '1px solid rgba(168,85,247,0.5)' : '1px solid rgba(255,255,255,0.08)',

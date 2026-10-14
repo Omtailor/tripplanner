@@ -25,7 +25,7 @@ export default function StepProgress({ step, paginate }) {
   }, [step])
 
   return (
-    <div ref={progressRef} style={{
+    <nav aria-label={`Trip planning progress, step ${step} of 7`} ref={progressRef} style={{
       display: 'flex', alignItems: 'center', gap: 6,
       marginBottom: 32, zIndex: 1,
       overflowX: 'auto', padding: '12px 16px',
@@ -38,7 +38,11 @@ export default function StepProgress({ step, paginate }) {
 
         return (
           <div key={s.id} style={{ display: 'flex', alignItems: 'center' }}>
-            <motion.div
+            <motion.button
+              type="button"
+              aria-current={active ? 'step' : undefined}
+              aria-label={`${s.label}, ${active ? 'current step' : done ? 'completed' : 'upcoming'}`}
+              disabled={!done}
               data-active={active ? "true" : "false"}
               onClick={() => done && paginate(s.id)}
               whileHover={done ? { scale: 1.05 } : {}}
@@ -63,7 +67,7 @@ export default function StepProgress({ step, paginate }) {
                 color: active ? '#fff' : done ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)',
                 whiteSpace: 'nowrap',
               }}>{s.label}</span>
-            </motion.div>
+            </motion.button>
 
             {i < STEPS.length - 1 && (
               <div style={{
@@ -75,6 +79,6 @@ export default function StepProgress({ step, paginate }) {
           </div>
         )
       })}
-    </div>
+    </nav>
   )
 }

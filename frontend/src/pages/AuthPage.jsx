@@ -14,10 +14,15 @@ import AuthHeader from '../components/auth/AuthHeader'
 import AuthInputField from '../components/auth/AuthInputField'
 import AuthSubmitButton from '../components/auth/AuthSubmitButton'
 import AuthTogglePrompt from '../components/auth/AuthTogglePrompt'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 
 const IMAGES = [bg1, bg2, bg3, bg4, bg5]
 
 export default function AuthPage() {
+  useDocumentMeta({
+    title: 'Sign In | TripPlanner',
+    description: 'Sign in to TripPlanner to create personalized travel itineraries.',
+  })
   const [isLogin, setIsLogin] = useState(true)
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [loading, setLoading] = useState(false)
@@ -31,6 +36,7 @@ export default function AuthPage() {
   }, [])
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
     const timer = setInterval(() => {
       setCurrent(prev => (prev + 1) % IMAGES.length)
     }, 4000)
@@ -72,7 +78,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div style={{
+    <main id="main-content" style={{
       position: 'fixed',
       top: 0, left: 0,
       width: '100vw', height: '100vh',
@@ -168,7 +174,7 @@ export default function AuthPage() {
           />
         </div>
       </div>
-    </div>
+    </main>
   )
 }
 

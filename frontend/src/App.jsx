@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage'
 import PlannerPage from './pages/PlannerPage'
 import ItineraryPage from './pages/ItineraryPage'
 import HistoryPage from './pages/HistoryPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function PublicRoute({ children }) {
   const { user, loading } = useAuth()
@@ -22,6 +23,7 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -48,7 +50,7 @@ function AppRoutes() {
         <Route path="/history" element={
           <ProtectedRoute><HistoryPage /></ProtectedRoute>
         } />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   )

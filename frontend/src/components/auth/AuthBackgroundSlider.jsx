@@ -2,7 +2,7 @@ export default function AuthBackgroundSlider({ images, current }) {
   return (
     <>
       {images.map((img, i) => (
-        <div key={i} style={{
+        <div key={i} aria-hidden="true" style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover',

@@ -2,7 +2,7 @@ import { ClipLoader } from 'react-spinners'
 
 export default function LoadingScreen() {
     return (
-        <div style={{
+        <div role="status" aria-live="polite" style={{
             minHeight: '100vh', display: 'flex', alignItems: 'center',
             justifyContent: 'center', background: '#050508',
             flexDirection: 'column', gap: 16,

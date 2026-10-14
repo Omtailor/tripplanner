@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /auth
+Disallow: /plan
+Disallow: /itinerary/
+Disallow: /history
+Disallow: /api/
+
+Sitemap: https://tripplanner-tawny.vercel.app/sitemap.xml

@@ -9,8 +9,14 @@ import HistoryHeader from '../components/history/HistoryHeader'
 import HistoryEmptyState from '../components/history/HistoryEmptyState'
 import HistoryTripCard from '../components/history/HistoryTripCard'
 import { toTitleCase } from '../utils/planner'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 
 export default function HistoryPage() {
+  useDocumentMeta({
+    title: 'Trip History | TripPlanner',
+    description: 'Review and manage your saved TripPlanner itineraries.',
+    noindex: true,
+  })
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(null)
@@ -39,7 +45,7 @@ export default function HistoryPage() {
   }
 
   if (loading) return (
-    <div style={{
+    <main id="main-content" style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center',
       justifyContent: 'center', background: '#080c1a',
       flexDirection: 'column', gap: 16,
@@ -48,7 +54,7 @@ export default function HistoryPage() {
       <p style={{ fontFamily: "'Inter', sans-serif", color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
         Loading your memories...
       </p>
-    </div>
+    </main>
   )
 
   return (

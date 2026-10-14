@@ -3,7 +3,7 @@ import { AlertTriangle } from 'lucide-react'
 
 export default function DeleteConfirmDialog({ destination, onConfirm, onCancel }) {
   return (
-    <div style={{
+    <div role="dialog" aria-modal="true" aria-labelledby="delete-trip-title" style={{
       position: 'fixed', inset: 0, zIndex: 100,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)',
@@ -32,12 +32,12 @@ export default function DeleteConfirmDialog({ destination, onConfirm, onCancel }
           <AlertTriangle size={24} color="#ef4444" />
         </div>
 
-        <h3 style={{
+        <h2 id="delete-trip-title" style={{
           fontFamily: "'Poppins', sans-serif",
           fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 12,
         }}>
           Delete this trip?
-        </h3>
+        </h2>
 
         <p style={{
           fontFamily: "'Inter', sans-serif",

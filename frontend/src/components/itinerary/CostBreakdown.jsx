@@ -65,6 +65,13 @@ export default function CostBreakdown({ summary, delay }) {
                         </Bar>
                     </BarChart>
                 </ResponsiveContainer>
+                <table className="visually-hidden">
+                    <caption>Trip cost breakdown</caption>
+                    <thead><tr><th scope="col">Category</th><th scope="col">Cost</th></tr></thead>
+                    <tbody>{chartData.map(item => (
+                        <tr key={item.name}><th scope="row">{item.name}</th><td>₹{item.value.toLocaleString()}</td></tr>
+                    ))}</tbody>
+                </table>
 
                 <div style={{
                     padding: 'clamp(14px, 2vw, 20px) clamp(16px, 3vw, 26px)', marginTop: 20,

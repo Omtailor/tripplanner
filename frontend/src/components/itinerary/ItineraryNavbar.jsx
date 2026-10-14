@@ -5,7 +5,7 @@ import ItineraryPDF from './ItineraryPDF'
 
 export default function ItineraryNavbar({ trip, itinerary, onBack, onHistory }) {
     return (
-        <div style={{
+        <header aria-label="Itinerary navigation" style={{
             position: 'sticky', top: 0, zIndex: 50,
             padding: 'clamp(10px, 2vw, 16px) clamp(14px, 3vw, 32px)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -14,7 +14,7 @@ export default function ItineraryNavbar({ trip, itinerary, onBack, onHistory }) 
             backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
             borderBottom: '1px solid rgba(255,255,255,0.07)',
         }}>
-            <button onClick={onBack} style={{
+            <button type="button" onClick={onBack} aria-label="Return to dashboard" style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
                 background: 'rgba(255,255,255,0.06)',
@@ -52,7 +52,7 @@ export default function ItineraryNavbar({ trip, itinerary, onBack, onHistory }) 
                         style={{ textDecoration: 'none' }}
                     >
                         {({ loading }) => (
-                            <button style={{
+                            <button type="button" aria-label={loading ? 'Preparing itinerary PDF' : 'Export itinerary as PDF'} style={{
                                 display: 'flex', alignItems: 'center', gap: 7,
                                 padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
                                 background: loading
@@ -76,7 +76,7 @@ export default function ItineraryNavbar({ trip, itinerary, onBack, onHistory }) 
                     </PDFDownloadLink>
                 )}
 
-                <button onClick={onHistory} style={{
+                <button type="button" onClick={onHistory} aria-label="View trip history" style={{
                     padding: 'clamp(7px, 1.5vw, 10px) clamp(12px, 2vw, 20px)',
                     background: 'rgba(255,255,255,0.06)',
                     border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100,
@@ -86,7 +86,7 @@ export default function ItineraryNavbar({ trip, itinerary, onBack, onHistory }) 
                 }}>
                     History
                 </button>
-            </div>
         </div>
+        </header>
     )
 }

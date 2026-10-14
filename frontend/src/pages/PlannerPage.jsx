@@ -10,8 +10,14 @@ import StepProgress from '../components/planner/StepProgress'
 import StepContent from '../components/planner/StepContent'
 import PlannerBackground from '../components/planner/PlannerBackground'
 import PlannerFooter from '../components/planner/PlannerFooter'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 
 export default function PlannerPage() {
+  useDocumentMeta({
+    title: 'Plan a Trip | TripPlanner',
+    description: 'Build a personalized TripPlanner itinerary with dates, budget, vibe, meals, and travel preferences.',
+    noindex: true,
+  })
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -84,6 +90,7 @@ export default function PlannerPage() {
         {generating && <GeneratingOverlay destination={data.destination || 'your destination'} />}
       </AnimatePresence>
 
+      <main id="main-content">
       <motion.div
         animate={{ opacity: generating ? 0 : 1 }}
         transition={{ duration: 0.4 }}
@@ -216,6 +223,7 @@ export default function PlannerPage() {
           }
         `}</style>
       </motion.div>
+      </main>
     </>
   )
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import toast from 'react-hot-toast'
 import useTypewriter from '../../hooks/useTypewriter'
 
 export default function SearchCard({ onSearch, isLimitExhausted }) {
@@ -21,7 +20,7 @@ export default function SearchCard({ onSearch, isLimitExhausted }) {
         borderRadius: 24, padding: 'clamp(18px, 4vw, 28px)',
         boxShadow: '0 24px 60px rgba(0,0,0,0.65)',
       }}>
-        <label style={{
+        <label htmlFor="destination-search" style={{
           fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 600,
           color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase',
           letterSpacing: '0.1em', marginBottom: 12, display: 'block',
@@ -32,6 +31,7 @@ export default function SearchCard({ onSearch, isLimitExhausted }) {
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
             <input
+              id="destination-search"
               value={searchVal}
               onChange={e => setSearchVal(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -60,6 +60,8 @@ export default function SearchCard({ onSearch, isLimitExhausted }) {
           </div>
 
           <button
+            type="button"
+            aria-label="Start planning this trip"
             onClick={handleSearch}
             style={{
               width: 54, height: 54, borderRadius: 14, flexShrink: 0,

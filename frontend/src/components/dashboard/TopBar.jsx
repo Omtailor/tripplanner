@@ -5,12 +5,12 @@ export default function TopBar({ rateLimit, onHistory, onLogout }) {
   const isLimitExhausted = rateLimit.remaining === 0
 
   return (
-    <div style={{
+    <header aria-label="Dashboard controls" style={{
       position: 'absolute', top: 20, right: 20, zIndex: 10,
       display: 'flex', alignItems: 'center', gap: 10,
     }}>
       <LimitTooltip remaining={rateLimit.remaining}>
-        <button style={{
+        <button type="button" role="status" aria-live="polite" aria-label={`Usage remaining: ${rateLimit.remaining} of ${rateLimit.limit}`} style={{
           display: 'flex', alignItems: 'center', gap: 6,
           height: 36, padding: '0 14px', borderRadius: 100,
           background: isLimitExhausted
@@ -38,7 +38,7 @@ export default function TopBar({ rateLimit, onHistory, onLogout }) {
         </button>
       </LimitTooltip>
 
-      <button onClick={onHistory} style={{
+      <button type="button" onClick={onHistory} aria-label="View trip history" style={{
         display: 'flex', alignItems: 'center', gap: 6,
         height: 36, padding: '0 14px', borderRadius: 100,
         background: 'rgba(8,8,18,0.40)',
@@ -52,7 +52,7 @@ export default function TopBar({ rateLimit, onHistory, onLogout }) {
         <History size={13} /> History
       </button>
 
-      <button onClick={onLogout} style={{
+      <button type="button" onClick={onLogout} aria-label="Log out" style={{
         display: 'flex', alignItems: 'center', gap: 6,
         height: 36, padding: '0 14px', borderRadius: 100,
         background: 'rgba(8,8,18,0.40)',
@@ -65,6 +65,6 @@ export default function TopBar({ rateLimit, onHistory, onLogout }) {
       }}>
         <LogOut size={13} /> Logout
       </button>
-    </div>
+    </header>
   )
 }

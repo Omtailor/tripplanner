@@ -9,9 +9,15 @@ import ItineraryHero from '../components/itinerary/ItineraryHero'
 import DayCard from '../components/itinerary/DayCard'
 import CostBreakdown from '../components/itinerary/CostBreakdown'
 import SuccessBanner from '../components/itinerary/SuccessBanner'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 
 
 export default function ItineraryPage() {
+    useDocumentMeta({
+        title: 'Itinerary | TripPlanner',
+        description: 'View your personalized TripPlanner travel itinerary, route, activities, and cost breakdown.',
+        noindex: true,
+    })
     const { id } = useParams()
     const navigate = useNavigate()
     const [itinerary, setItinerary] = useState(null)
@@ -60,7 +66,7 @@ export default function ItineraryPage() {
 
 
     return (
-        <div style={{
+        <main id="main-content" style={{
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #050508 0%, #0d0d1a 50%, #050508 100%)',
         }}>
@@ -114,6 +120,6 @@ export default function ItineraryPage() {
           }
         }
       `}</style>
-        </div>
+        </main>
     )
 }

@@ -13,9 +13,10 @@ export default function AuthInputField({
 }) {
   return (
     <div>
-      <label style={labelStyle}>{label}</label>
+      <label htmlFor={name} style={labelStyle}>{label}</label>
       <div style={{ position: 'relative' }}>
         <input
+          id={name}
           className="glass-input"
           name={name}
           type={type}
@@ -40,6 +41,8 @@ export default function AuthInputField({
               transition: 'color 0.2s',
             }}
             title={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-pressed={showPassword}
           >
             {showPassword ? '🙈' : '👁️'}
           </button>
